@@ -1,0 +1,20 @@
+{
+  "name": "js-sdk-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "client:dev": "pnpm --filter chatdoc-api-demo-client run dev",
+    "client:build": "pnpm --filter chatdoc-api-demo-client run build",
+    "server:dev": "pnpm --filter chatdoc-api-demo-server run start:dev",
+    "start": "pnpm run client:build && pnpm run server:dev",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^8.0.3"
+  }
+}
