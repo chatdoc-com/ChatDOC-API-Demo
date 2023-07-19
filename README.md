@@ -15,3 +15,5 @@ run `pnpm install`
 
 run `pnpm start`
 
+![The started](./started.png)
+
