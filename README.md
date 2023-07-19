@@ -1,5 +1,9 @@
 # ChatDOC_API_Demo
 
+## Environment
+
+You need install or update your Node.js(>=16.x) and  pnpm (>= 8.x)
+
 ## Installation
 
 run `pnpm install`
