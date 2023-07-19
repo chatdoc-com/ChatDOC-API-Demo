@@ -2,7 +2,8 @@
 
 ## Environment
 
-You need install or update your Node.js(>=16.x) and  pnpm (>= 8.x)
+- Node.js >= 16.x
+- pnpm >= 8.x
 
 ## Installation
 
