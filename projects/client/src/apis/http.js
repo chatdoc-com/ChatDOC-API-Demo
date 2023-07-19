@@ -1,6 +1,5 @@
 import axios from 'axios';
 import get from 'lodash-es/get';
-import Crypt from 'cryptjs';
 
 export const baseURL = `./api/v1`;
 
@@ -8,29 +7,16 @@ export const fileBase = `${window.location.origin}${window.location.pathname}`;
 
 export const fileBaseApiURL = `${fileBase}api/v1`;
 
-export const handleResponseData = (data) => {
-  let encryptData = Crypt.fromBytes(new Uint8Array(data));
-  try {
-    encryptData = JSON.parse(encryptData);
-  } catch (e) {
-    return Promise.reject(e);
-  }
-
-  return encryptData;
-};
-
 const timeout = 120e3;
 
 const http = axios.create({
   baseURL,
   timeout,
-  responseType: 'arraybuffer',
 });
 
 export const fileHttp = axios.create({
   baseURL,
   timeout,
-  responseType: 'arraybuffer',
 });
 
 http.interceptors.request.use(
@@ -54,8 +40,7 @@ http.interceptors.response.use(
       return Promise.reject(new Error('Failed to get data'));
     }
 
-    const data = handleResponseData(result.data);
-    // const { data } = result;
+    const { data } = result;
 
     if (data.status === 'ok') {
       return data.data;

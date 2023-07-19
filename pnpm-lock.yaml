@@ -25,9 +25,6 @@ importers:
       axios:
         specifier: ^1.4.0
         version: 1.4.0
-      cryptjs:
-        specifier: ^1.0.2
-        version: 1.0.2
       element-plus:
         specifier: ^2.3.7
         version: 2.3.7(vue@3.2.47)
@@ -1048,10 +1045,6 @@ packages:
     hasBin: true
     dev: false
 
-  /aes-js@3.1.2:
-    resolution: {integrity: sha1-25qr3oXVyqu/wNTypERpYPYnFGo=}
-    dev: false
-
   /ajv@6.12.6:
     resolution: {integrity: sha1-uvWmLoArB9l3A0WG+MO69a3ybfQ=}
     dependencies:
@@ -1645,13 +1638,6 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
-    dev: false
-
-  /cryptjs@1.0.2:
-    resolution: {integrity: sha512-/V9CM3Uc/SwpGP5/6LeVag4fthNA9RCO0yEee4KCJE+QCCsr5++8SAQLcFBAQyKGl6yLDSQuIxMDmI/kHWdYPA==}
-    dependencies:
-      aes-js: 3.1.2
-      pako: 1.0.11
     dev: false
 
   /css-functions-list@3.2.0:
@@ -4012,10 +3998,6 @@ packages:
   /p-try@2.2.0:
     resolution: {integrity: sha1-yyhoVA4xPWHeWPr741zpAE1VQOY=}
     engines: {node: '>=6'}
-    dev: false
-
-  /pako@1.0.11:
-    resolution: {integrity: sha1-bJWZ00DVTf05RjgCUqNXBaa5kr8=}
     dev: false
 
   /pako@2.1.0:
