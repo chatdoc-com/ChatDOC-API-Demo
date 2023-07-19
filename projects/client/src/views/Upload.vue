@@ -26,7 +26,7 @@
             <el-icon class="el-icon--upload">
               <svg-icon name="upload" :size="60" fill="#6576DB" />
             </el-icon>
-            <div class="el-upload__text">Drop file here or click to upload</div>
+            <div class="el-upload__text">Drop file here or click to upload.</div>
           </el-upload>
           <div v-if="$progress && $files.length === 0">
             <span>0/1</span>
@@ -54,7 +54,7 @@
                 color="var(--el-color-primary)" />
             </el-icon>
             <div class="el-upload__text">
-              Drop multiple files as collection <br />or click to upload
+              Drop multiple files as collection <br />or click to upload.
             </div>
           </el-upload>
           <div v-if="$progress && $files.length > 0">
