@@ -26,6 +26,7 @@
     "koa": "^2.14.2",
     "koa-sslify": "^5.0.1",
     "koa-static": "^5.0.0",
+    "multer": "2.0.0-rc.4",
     "node-fetch": "^3.3.1",
     "nodemon": "^2.0.22"
   }
