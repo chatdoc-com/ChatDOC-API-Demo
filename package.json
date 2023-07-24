@@ -15,6 +15,18 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "husky": "^8.0.3"
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.3",
+    "prettier": "^2.8.8"
+  },
+  "lint-staged": {
+    "projects/**/*.{js,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "projects/**/*.{css,scss,vue}": [
+      "stylelint --fix",
+      "prettier --write"
+    ]
   }
 }
