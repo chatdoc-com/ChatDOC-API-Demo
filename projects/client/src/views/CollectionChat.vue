@@ -73,7 +73,6 @@ const onSourceItemClicked = async ({ sources }) => {
 
   sources.slice().forEach((source) => {
     const { page, rects } = source;
-    // const spreadSource
     results.push({
       pageNumber: page + 1,
       rects,
@@ -86,7 +85,6 @@ const onSourceItemClicked = async ({ sources }) => {
 const changeFile = (docId) => {
   $docId.value = docId;
   setFileUrl(sdk, docId);
-  // getFileInfo()
 };
 
 onMounted(async () => {
@@ -105,7 +103,7 @@ onMounted(async () => {
   }
 });
 </script>
-<style scoped>
+<style scoped lang="scss">
 .container {
   display: flex;
   width: 100%;

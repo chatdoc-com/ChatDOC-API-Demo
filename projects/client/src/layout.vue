@@ -10,7 +10,7 @@
       <el-divider />
       <span class="title">Demo</span>
     </div>
-     <router-view />
+    <router-view />
   </div>
 </template>
 <script setup>

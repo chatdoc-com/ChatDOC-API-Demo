@@ -16,7 +16,6 @@ export const validateFileSize = async (file) => {
 
     // 检查文件大小
     if (file.size / 1024000 > FILE_LIMIT.MAX_SIZE) {
-      console.log(file.size, FILE_LIMIT.MAX_SIZE);
       throw new Error(
         `Your file is larger than (${FILE_LIMIT.MAX_SIZE}MB) so we can't deal with it.`,
       );
