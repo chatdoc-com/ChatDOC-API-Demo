@@ -7,7 +7,7 @@
     "client:dev": "pnpm --filter chatdoc-api-demo-client run dev",
     "client:build": "pnpm --filter chatdoc-api-demo-client run build",
     "server:dev": "pnpm --filter chatdoc-api-demo-server run start:dev",
-    "start": "pnpm run client:build && pnpm run server:dev",
+    "start": "concurrently 'pnpm run client:dev' 'pnpm run server:dev'",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install"
   },
@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "concurrently": "^8.2.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "prettier": "^2.8.8"
