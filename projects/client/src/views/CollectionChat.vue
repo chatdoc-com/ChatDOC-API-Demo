@@ -72,7 +72,7 @@ const onSourceItemClicked = async ({ sources }) => {
   const results = [];
 
   sources.slice().forEach((source) => {
-    const { page, rects, spreads } = source;
+    const { page, rects, spreads = [] } = source;
     results.push({
       pageNumber: page + 1,
       rects,
