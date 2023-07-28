@@ -13,9 +13,7 @@
           (itemsWithPage) =>
             handleClickOnAnswerContent({ itemsWithPage, chatId: item.id })
         "
-        @source-item-clicked="
-          ({ page }) => handleSourceItemClicked({ page, chatId: item.id })
-        " />
+        @source-item-clicked="handleSourceItemClicked" />
     </li>
   </ol>
 </template>
@@ -27,7 +25,7 @@ import AnswerCard from './AnswerCard.vue';
 
 const $chatItemRefs = ref(null);
 
-const props = defineProps({
+defineProps({
   fileInfo: {
     type: Object,
     required: true,
@@ -43,14 +41,8 @@ const props = defineProps({
 });
 
 const emits = defineEmits(['sourceItemClicked']);
-const handleSourceItemClicked = ({ page, chatId }) => {
-  const chatItem = props.chatList.find((item) => item.id === chatId);
-  if (chatItem) {
-    const sourceItem = chatItem.answer.sources.find(
-      (item) => item.page === page,
-    );
-    emits('sourceItemClicked', { sources: [sourceItem] });
-  }
+const handleSourceItemClicked = (source) => {
+  emits('sourceItemClicked', { sources: [source] });
 };
 
 const handleClickOnAnswerContent = ({ itemsWithPage }) => {
@@ -108,7 +100,7 @@ const handleClickOnAnswerContent = ({ itemsWithPage }) => {
     margin-bottom: 5px;
     padding: 12px 0 5px 23px;
     overflow-y: hidden;
-    font-size: var(--chat-view-font-size, 14px);
+    font-size: 14px;
     background-color: var(--el-fill-color-lighter);
     border: 1px solid var(--el-border-color-primary);
     border-radius: 4px;
@@ -139,69 +131,5 @@ const handleClickOnAnswerContent = ({ itemsWithPage }) => {
       content: '';
     }
   }
-
-  .question-input-content {
-    font-weight: bold;
-    font-size: var(--chat-view-font-size, 14px);
-  }
-
-  .question-bottom-wrap {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 5px;
-
-    .question-bottom-create-at {
-      padding: 6px 0;
-      color: var(--el-text-color-secondary);
-      line-height: 12px;
-    }
-  }
-
-  .handlers-wrap {
-    display: flex;
-    align-items: center;
-    padding: 0 0 0 15px;
-    column-gap: 18px;
-
-    svg {
-      margin: 0;
-      color: var(--el-text-color-shallow);
-      transition: color 0.3s;
-
-      &:active {
-        color: var(--el-color-primary);
-      }
-    }
-    .thread-icon-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: start;
-      column-gap: 2px;
-      cursor: pointer;
-
-      &:disabled {
-        opacity: 0.5;
-
-        .thread-icon {
-          pointer-events: none;
-        }
-      }
-
-      .quote-number {
-        color: var(--el-text-color-shallow);
-        transition: color 0.3s;
-      }
-
-      &:hover {
-        .quote-number {
-          color: var(--el-color-primary);
-        }
-      }
-    }
-  }
-}
-
-.disabled-svg {
-  opacity: 0.5;
 }
 </style>

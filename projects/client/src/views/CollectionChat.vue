@@ -19,12 +19,13 @@
         :disabled="!$fileParsed"
         :file-info="$fileInfo"
         :material-data="$materialData"
+        :upload-id="$collectionId"
         @source-item-clicked="onSourceItemClicked" />
     </div>
   </div>
 </template>
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { fetchFileInfo } from '../apis/api.js';
@@ -40,7 +41,11 @@ const $collectionId = computed(() => {
 });
 const $docId = ref('');
 const $pdfDom = ref(null);
-const { $materialData, initSDK, setFileUrl } = useSdk($pdfDom, $docId);
+const $sources = ref([]);
+const { $materialData, initSDK, setFileUrl, EVENT_TYPES } = useSdk(
+  $pdfDom,
+  $docId,
+);
 let sdk = null;
 const $fileInfo = ref(null);
 const $fileParsed = computed(() => {
@@ -65,26 +70,35 @@ const getFileInfo = async () => {
 
 const onSourceItemClicked = async ({ sources }) => {
   const results = [];
-  const docId = sources[0].docId;
-  if (docId !== $docId.value) {
-    setFileUrl(sdk, docId);
-    await sdk.ready();
-  }
 
   sources.slice().forEach((source) => {
-    const { page, rects } = source;
+    const { page, rects, spreads } = source;
     results.push({
       pageNumber: page + 1,
       rects,
     });
+    spreads.forEach((spread) => {
+      results.push({
+        pageNumber: spread.page + 1,
+        rects: spread.rects,
+      });
+    });
   });
+  const docId = sources[0].docId;
 
+  if (docId !== $docId.value) {
+    changeFile(docId);
+    $sources.value = results;
+    // drawSources on VIEWER_CREATED envent
+    return;
+  }
   sdk.drawSources(results);
 };
 
 const changeFile = (docId) => {
   $docId.value = docId;
   setFileUrl(sdk, docId);
+  getFileInfo();
 };
 
 onMounted(async () => {
@@ -94,7 +108,14 @@ onMounted(async () => {
     $collectionName.value = resp.name;
     $docId.value = $fileList.value.length > 0 && $fileList.value[0].id;
     sdk = initSDK();
-    await getFileInfo();
+
+    sdk.on(EVENT_TYPES.VIEWER_CREATED, () => {
+      if ($sources.value.length > 0) {
+        sdk.drawSources($sources.value);
+        $sources.value = [];
+      }
+    });
+    getFileInfo();
   } catch (error) {
     ElMessage({
       message: error.message,
@@ -102,40 +123,49 @@ onMounted(async () => {
     });
   }
 });
+
+onBeforeUnmount(() => {
+  clearTimeout(timeout);
+  timeout = null;
+});
 </script>
 <style scoped lang="scss">
 .container {
   display: flex;
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  box-sizing: border-box;
 }
 
 .collection-list {
   width: 230px;
   overflow: hidden;
+
   .name {
-    height: 40px;
-    background-color: rgb(249, 249, 249);
-    line-height: 100%;
-    margin: 0;
-    padding-left: 10px;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid rgb(231, 234, 241);
+    height: 40px;
+    margin: 0;
+    padding-left: 10px;
     font-weight: 500;
+    line-height: 100%;
+    background-color: rgb(249, 249, 249);
+    border-bottom: 1px solid rgb(231, 234, 241);
   }
+
   .list-container {
     height: calc(100% - 40px);
-    overflow-y: auto;
     padding: 0 10px;
+    overflow-y: auto;
   }
 }
+
 .pdf-container {
   flex: 1;
   overflow: hidden;
 }
+
 .chat-container {
   width: 35%;
   overflow: hidden;

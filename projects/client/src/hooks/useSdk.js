@@ -17,6 +17,7 @@ export const useSdk = ($pdfDom, $docId) => {
 
   return {
     $materialData,
+    EVENT_TYPES,
     initSDK: () => {
       if (!$docId.value) {
         return;

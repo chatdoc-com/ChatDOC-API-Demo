@@ -1,3 +1,11 @@
+/**
+ * Converts the source info item to a compatible format for both single document and collections source info.
+ *
+ * @param {Object} sourceInfoItem - The source info item to be converted.
+ * @param {string} sourceInfoItem.upload_id - The ID of the uploaded document.
+ * @param {Object} sourceInfoItem.rects - The rectangles information of the source info item.
+ * @return {Array} The converted source info item in a compatible format.
+ */
 export const convertSourceInfoItem = (sourceInfoItem) => {
   const { upload_id, rects } = sourceInfoItem;
   const rectObjByPageKey = rects || sourceInfoItem;
@@ -12,6 +20,25 @@ export const convertSourceInfoItem = (sourceInfoItem) => {
   });
 };
 
+/**
+ * @typedef SourceInfoItem {Object}
+ * @property rects {Object}
+ * @property upload_id {string}
+ */
+
+/**
+ * @typedef SourcesItem {Object}
+ * @property docId {string}
+ * @property page {number}
+ * @property rects {number[][]}
+ * @property spreads {Object[]}
+ */
+
+/**
+ * Translate the sourceInfo data returned by the API
+ * @param sourceInfo {SourceInfoItem[]}
+ * @returns {SourcesItem[]}
+ */
 export const convertSourceInfoToSources = (sourceInfo) => {
   const sources = [];
   sourceInfo.forEach((item) => {
@@ -59,21 +86,6 @@ export const convertSourceInfoToSources = (sourceInfo) => {
   return sources;
 };
 
-export const convertReceivedMaterialToSourceInfo = (rectsData) => {
-  const requestSourceInfo = [];
-  const rects = rectsData;
-  rects.forEach((rectInfo) => {
-    const { pageNumber, outline, docId } = rectInfo;
-    requestSourceInfo.push({
-      upload_id: docId,
-      rects: {
-        [pageNumber - 1]: [outline],
-      },
-    });
-  });
-  return requestSourceInfo;
-};
-
 export function getTextWidth(text, font) {
   const canvas =
     getTextWidth.canvas ||
@@ -82,25 +94,4 @@ export function getTextWidth(text, font) {
   context.font = font;
   const metrics = context.measureText(text);
   return metrics.width;
-}
-
-export function getSelectedMaterial(materialData, docId) {
-  if (!materialData) {
-    return null;
-  }
-  const rects = [];
-  materialData.rects.forEach((rectInfo) => {
-    const { pageNumber, outline } = rectInfo;
-    rects.push({
-      upload_id: docId,
-      rects: {
-        [pageNumber - 1]: [outline],
-      },
-    });
-  });
-
-  return {
-    selected_text: materialData.material,
-    selected_source: rects,
-  };
 }

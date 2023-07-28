@@ -7,6 +7,7 @@
         :disabled="!$fileParsed"
         :file-info="$fileInfo"
         :material-data="$materialData"
+        :upload-id="$docId"
         @source-item-clicked="onSourceItemClicked" />
     </div>
   </div>
@@ -50,10 +51,16 @@ const getFileInfo = async () => {
 const onSourceItemClicked = ({ sources }) => {
   const results = [];
   sources.slice().forEach((source) => {
-    const { page, rects } = source;
+    const { page, rects, spreads = [] } = source;
     results.push({
       pageNumber: page + 1,
       rects,
+    });
+    spreads.forEach((spread) => {
+      results.push({
+        pageNumber: spread.page + 1,
+        rects: spread.rects,
+      });
     });
   });
   sdk.drawSources(results);
@@ -66,20 +73,24 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   sdk.destroy();
+  clearTimeout(timeout);
+  timeout = null;
 });
 </script>
 <style scoped>
 .container {
   display: flex;
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  box-sizing: border-box;
 }
+
 .pdf-container {
   flex: 1;
   overflow: hidden;
 }
+
 .chat-container {
   flex: 1;
   overflow: hidden;

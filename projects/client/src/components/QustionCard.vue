@@ -33,7 +33,6 @@ defineProps({
   justify-content: space-between;
   padding: 20px 18px;
   column-gap: 15px;
-  background-color: var(--question-bg-color);
 
   .avater {
     width: 28px;
@@ -43,6 +42,11 @@ defineProps({
   .right {
     flex: 1;
     overflow: auto;
+  }
+
+  .question-input-content {
+    font-weight: bold;
+    font-size: 14px;
   }
 }
 </style>

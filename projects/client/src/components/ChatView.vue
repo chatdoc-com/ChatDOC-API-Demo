@@ -45,6 +45,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  uploadId: {
+    type: String,
+    required: true,
+  },
 });
 
 const emits = defineEmits(['sourceItemClicked']);
@@ -152,7 +156,12 @@ const sendQuestion = async () => {
     let response = null;
     const data = {
       question: $currentQuestion.value,
-      selected_meta: $materialData.value,
+      selected_meta: $materialData.value
+        ? {
+            ...$materialData.value,
+            upload_id: $docId.value,
+          }
+        : null,
       search_entire_doc: true,
       detailed_citation: true,
       // language: "english",
@@ -160,7 +169,7 @@ const sendQuestion = async () => {
     };
     clearCurrentQuestion();
     // return a ReadableStream
-    response = await fetchChatStream(props.fileInfo.id, data);
+    response = await fetchChatStream(props.uploadId, data);
     clearCurrentQuestion();
 
     // read stream
@@ -180,17 +189,17 @@ const sendQuestion = async () => {
     if (!newChatItem.answer.content.value) {
       throw new Error('An unknown error occurred, please try again.');
     }
-    (newChatItem.answer.originalSources = JSON.parse(
-      JSON.stringify(sourceInfo),
-    )),
-      (newChatItem.answer.sources.value =
-        convertSourceInfoToSources(sourceInfo));
+    newChatItem.answer.originalSources = JSON.parse(JSON.stringify(sourceInfo));
+
+    newChatItem.answer.sources.value = convertSourceInfoToSources(sourceInfo);
+
     newChatItem.answer.isStreamComplete = true;
   } catch (e) {
     const { status, message, info } = e;
     if (status === 403 && info.reason === 'banned') {
       throw e;
     }
+
     if (status === 404) {
       throw e;
     }

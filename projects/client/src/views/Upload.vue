@@ -178,6 +178,7 @@ const handleFileUpload = async (file) => {
     if (isValid) {
       $upload.value.submit();
       $loading.value = false;
+      $progress.value = 1;
     } else {
       $upload.value.clearFiles();
     }
@@ -210,10 +211,13 @@ const handleExceed = () => {
 };
 
 const handleProgress = (e, file, files) => {
+  if (!$isCollection.value) {
+    $progress.value = Math.floor(e.percent);
+    return;
+  }
   const percent = Math.floor(
     files.reduce((p, c) => p + c.percentage, 0) / files.length,
   );
-
   $uploadFiles.value = Math.floor((percent * files.length) / 100);
   $progress.value = percent;
 };
@@ -232,6 +236,7 @@ watch(
       await createCollect();
       $collectionUpload.value.submit();
       $loading.value = false;
+      $progress.value = 1;
     } else {
       clearData();
     }

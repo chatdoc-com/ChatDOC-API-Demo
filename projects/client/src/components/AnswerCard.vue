@@ -51,11 +51,9 @@ const props = defineProps({
     required: true,
   },
 });
-const emits = defineEmits(['sourceItemClicked']);
+const emits = defineEmits(['sourceItemClicked', 'chatItemClickedOnSource']);
 const sourceItemClicked = (source) => {
-  emits('sourceItemClicked', {
-    page: source.page,
-  });
+  emits('sourceItemClicked', source);
 };
 
 const chatItemClicked = (event) => {
@@ -101,8 +99,8 @@ const chatItemClicked = (event) => {
       color: red;
 
       p {
-        white-space: pre-line;
         margin-top: 0;
+        white-space: pre-line;
       }
     }
 
@@ -124,8 +122,8 @@ const chatItemClicked = (event) => {
     flex: 1;
 
     .message {
-      font-size: var(--chat-view-font-size, 14px);
       margin-top: -1em;
+      font-size: var(--chat-view-font-size, 14px);
     }
 
     .quote {
