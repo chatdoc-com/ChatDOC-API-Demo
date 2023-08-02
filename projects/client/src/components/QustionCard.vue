@@ -44,6 +44,10 @@ defineProps({
     overflow: auto;
   }
 
+  .question-material {
+    font-size: 14px;
+  }
+
   .question-input-content {
     font-weight: bold;
     font-size: 14px;

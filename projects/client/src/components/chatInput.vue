@@ -183,13 +183,14 @@ defineExpose({
 
 <style scoped lang="scss">
 .chat-footer {
-  bottom: 0px;
+  position: sticky !important;
+  bottom: 0;
   z-index: 100;
   box-sizing: border-box;
-  position: sticky !important;
-  border-top: 1px solid var(--el-border-color-primary);
   background-color: white;
+  border-top: 1px solid var(--el-border-color-primary);
 }
+
 .footer-container {
   position: relative;
   z-index: 100;
@@ -228,12 +229,11 @@ defineExpose({
   }
 
   .question-list {
+    padding-left: 0;
     font-size: 14px;
     list-style: decimal;
-    padding-left: 0px;
 
     li {
-      cursor: pointer;
       display: flex;
       align-items: center;
       margin-bottom: 10px;
@@ -243,6 +243,8 @@ defineExpose({
       background-color: var(--el-bg-color);
       border-radius: 5px;
       box-shadow: 1px 1px 5px 0 #3f4a8b1a;
+      cursor: pointer;
+
       p {
         margin: 8px 0;
       }
@@ -257,12 +259,12 @@ defineExpose({
 
 .material-bar {
   margin: 0 15px;
+  margin-top: 10px;
+  margin-bottom: -11px;
   background-color: var(--el-fill-color-lighter);
   border: 1px solid var(--el-border-color-primary);
-  border-radius: 4px 4px 0 0;
   border-bottom: none;
-  margin-bottom: -11px;
-  margin-top: 10px;
+  border-radius: 4px 4px 0 0;
 
   .material-content {
     position: relative;
@@ -317,8 +319,8 @@ defineExpose({
 }
 
 .bottom-bar {
-  background-color: var(--el-bg-color);
   margin-top: 10px;
+  background-color: var(--el-bg-color);
 
   &.disabled {
     background-color: var(--el-disabled-bg-color);
@@ -345,11 +347,11 @@ defineExpose({
   }
 
   .question-container {
-    box-shadow: rgba(89, 87, 90, 0.08) 0px 4px 12px;
+    margin: 0 15px;
     overflow: hidden;
     border: 1px solid var(--el-border-color-primary);
     border-radius: 4px;
-    margin: 0 15px;
+    box-shadow: rgba(89, 87, 90, 8%) 0 4px 12px;
 
     &.show-material {
       border-top: none;
@@ -424,8 +426,8 @@ defineExpose({
         }
 
         .recommend-question-icon {
-          transition: color 0.3s;
           cursor: pointer;
+          transition: color 0.3s;
 
           &:hover {
             color: var(--el-color-primary);
@@ -433,8 +435,8 @@ defineExpose({
         }
 
         .submit-question-icon {
-          transition: color 0.3s;
           cursor: pointer;
+          transition: color 0.3s;
 
           &:hover {
             color: var(--el-color-primary);

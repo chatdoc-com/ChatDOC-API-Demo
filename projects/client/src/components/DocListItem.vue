@@ -57,14 +57,14 @@ const onItemClick = () => {
 }
 
 .item-block {
+  margin: 5px 0;
   padding: 10px 5px;
   border-radius: 4px;
   cursor: pointer;
-  margin: 5px 0;
 
   &.active,
   &:hover {
-    background-color: rgba(107, 108, 111, 0.1019607843);
+    background-color: rgba(107, 108, 111, 10.2%);
   }
 }
 

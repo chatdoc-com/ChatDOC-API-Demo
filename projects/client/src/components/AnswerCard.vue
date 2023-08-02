@@ -29,7 +29,14 @@
                 :key="source.page"
                 class="answer-source-item"
                 @click.stop="sourceItemClicked(source)">
-                <span class="page">{{ source.page + 1 }}</span>
+                <el-tooltip
+                  v-if="!!getTooltip(source)"
+                  placement="top"
+                  :hide-after="0"
+                  :content="getTooltip(source)">
+                  <span class="page">{{ source.page + 1 }}</span>
+                </el-tooltip>
+                <span v-else class="page">{{ source.page + 1 }}</span>
               </span>
             </div>
           </div>
@@ -45,10 +52,16 @@ import SvgIcon from './SvgIcon.vue';
 import { convertSourceInfoItem } from '../utils/util.js';
 import { getHtmlByMd } from '../utils/md.js';
 
+import { ElTooltip } from 'element-plus';
+
 const props = defineProps({
   answer: {
     type: Object,
     required: true,
+  },
+  docNameDict: {
+    type: Object,
+    default: () => null,
   },
 });
 const emits = defineEmits(['sourceItemClicked', 'chatItemClickedOnSource']);
@@ -75,6 +88,11 @@ const chatItemClicked = (event) => {
       }
     }
   }
+};
+
+const getTooltip = (source) => {
+  const docName = props.docNameDict?.[source.docId];
+  return docName;
 };
 </script>
 <style scoped lang="scss">

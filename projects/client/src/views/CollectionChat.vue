@@ -20,6 +20,7 @@
         :file-info="$fileInfo"
         :material-data="$materialData"
         :upload-id="$collectionId"
+        :doc-name-dict="$collectionDocNameDict"
         @source-item-clicked="onSourceItemClicked" />
     </div>
   </div>
@@ -38,6 +39,12 @@ const route = useRoute();
 const $fileList = ref([]);
 const $collectionId = computed(() => {
   return route.params.id;
+});
+const $collectionDocNameDict = computed(() => {
+  return $fileList.value.reduce((res, cur) => {
+    res[cur.id] = cur.name;
+    return res;
+  }, {});
 });
 const $docId = ref('');
 const $pdfDom = ref(null);

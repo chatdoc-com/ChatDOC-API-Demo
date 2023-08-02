@@ -24,13 +24,15 @@ import { ElDivider } from 'element-plus';
   overflow: auto;
   background: url('./assets/imgs/api/home-bg.png') no-repeat right bottom,
     linear-gradient(180deg, #f6faff 0%, #eaf3ff 100%);
+
   .header {
     width: 100%;
     padding-left: 30px;
+
     .title {
       color: #142132;
-      font-size: 20px;
       font-weight: 500;
+      font-size: 20px;
     }
   }
 }

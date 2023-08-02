@@ -9,6 +9,7 @@
       <qustion-card :question="item.question" />
       <answer-card
         :answer="item.answer"
+        :doc-name-dict="docNameDict"
         @chat-item-clicked-on-source="
           (itemsWithPage) =>
             handleClickOnAnswerContent({ itemsWithPage, chatId: item.id })
@@ -37,6 +38,10 @@ defineProps({
   chatListFirstLoaded: {
     type: Boolean,
     default: true,
+  },
+  docNameDict: {
+    type: Object,
+    default: () => null,
   },
 });
 

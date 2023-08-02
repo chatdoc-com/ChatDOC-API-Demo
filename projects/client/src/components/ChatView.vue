@@ -6,6 +6,7 @@
         :file-info="fileInfo"
         :chat-list="$chatList"
         :chat-list-first-loaded="true"
+        :doc-name-dict="docNameDict"
         @material-chat="materialChat"
         @source-item-clicked="handleSourceItemClicked" />
     </div>
@@ -48,6 +49,10 @@ const props = defineProps({
   uploadId: {
     type: String,
     required: true,
+  },
+  docNameDict: {
+    type: Object,
+    default: () => null,
   },
 });
 
@@ -162,7 +167,7 @@ const sendQuestion = async () => {
             upload_id: $docId.value,
           }
         : null,
-      search_entire_doc: true,
+      search_entire_doc: false,
       detailed_citation: true,
       // language: "english",
       history: history,
@@ -257,6 +262,7 @@ watch(
   width: 100%;
   height: 100%;
   overflow: hidden;
+  border-left: 1px solid #8080803d;
 
   .thread-drawer {
     overflow: hidden;
