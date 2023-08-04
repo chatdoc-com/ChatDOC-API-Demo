@@ -1,0 +1,19 @@
+name: Sync
+on:
+  push:
+    branches:
+      - main
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@master
+        if: ${{ github.event.repository.name == 'ChatDOC-API-Demo-Private' }}
+        with:
+          token: ${{ secrets.KD_PAT }}
+          fetch-depth: 0
+      - run: |
+          git remote add pub https://github.com/chatdoc-com/ChatDOC-API-Demo.git
+          git push pub ${{ env.GITHUB_REF }}
+        if: ${{ github.event.repository.name == 'ChatDOC-API-Demo-Private' }}
