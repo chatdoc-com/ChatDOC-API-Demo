@@ -38,7 +38,7 @@ const getFileInfo = async () => {
   const data = await fetchFileInfo($docId.value);
   $fileInfo.value = data;
 
-  if (!$fileParsed.value) {
+  if (!$fileParsed.value && data.status > 0) {
     timeout = setTimeout(() => {
       getFileInfo();
     }, 10000);

@@ -12,15 +12,14 @@ export const DOC_ERROR_STATUS = {
 };
 
 export const DOC_STATUS_MESSAGE = {
-  [DOC_ERROR_STATUS.TEXT_PARSE_ERROR]: 'text embedding failed',
-  [DOC_ERROR_STATUS.ELEMENT_PARED_ERROR]: 'element embedding failed',
-  [DOC_ERROR_STATUS.PDF_CONVERT_ERROR]: 'docx to pdf failed',
-  [DOC_ERROR_STATUS.LINK_DOWNLOAD_ERROR]: 'file link download failed',
-  [DOC_ERROR_STATUS.EXCEED_SIZE_ERROR]: 'file size exceed limit',
+  [DOC_ERROR_STATUS.TEXT_PARSE_ERROR]: 'Text embedding failed.',
+  [DOC_ERROR_STATUS.ELEMENT_PARED_ERROR]: 'Element embedding failed.',
+  [DOC_ERROR_STATUS.EXCEED_SIZE_ERROR]: 'File size limit exceeded.',
   [DOC_ERROR_STATUS.EXCEED_TOKENS_ERROR]:
     'The content of a single page in a document must not exceed 4500 tokens.',
-  [DOC_ERROR_STATUS.PAGE_LIMIT_ERROR]: 'page limit error',
-  [DOC_ERROR_STATUS.TITLE_COMPLETE_ERROR]: 'complete title failed',
-  [DOC_ERROR_STATUS.READ_TMP_FILE_ERROR]: 'read tmp file error',
-  [DOC_ERROR_STATUS.OCR_PAGE_LIMIT_ERROR]: 'ocr page limit error',
+  [DOC_ERROR_STATUS.PAGE_LIMIT_ERROR]: 'Page limit exceeded.',
+  [DOC_ERROR_STATUS.TITLE_COMPLETE_ERROR]:
+    'ChatGPT failed to generate a title by summarizing the article.',
+  [DOC_ERROR_STATUS.READ_TMP_FILE_ERROR]: 'Temporary file reading error.',
+  [DOC_ERROR_STATUS.OCR_PAGE_LIMIT_ERROR]: 'OCR page limit exceeded.',
 };

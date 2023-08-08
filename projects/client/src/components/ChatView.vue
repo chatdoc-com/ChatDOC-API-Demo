@@ -33,6 +33,7 @@ import {
 import ChatList from './chatList.vue';
 import chatInput from './chatInput.vue';
 import { convertSourceInfoToSources } from '../utils/util.js';
+import { DOC_STATUS_MESSAGE } from '../utils/constants.js';
 const props = defineProps({
   fileInfo: {
     type: Object,
@@ -73,9 +74,17 @@ const $docId = computed(() => {
 });
 
 const $placeholder = computed(() => {
-  return props.disabled
-    ? 'You may take a sip of your coffee while I am working hard on processing the file.'
-    : '+ New chat.';
+  if (props.disabled) {
+    if (props.fileInfo.status < 0) {
+      return (
+        DOC_STATUS_MESSAGE[props.fileInfo.status] || 'File processing failed.'
+      );
+    } else {
+      return 'You may take a sip of your coffee while I am working hard on processing the file.';
+    }
+  } else {
+    return '+ New chat.';
+  }
 });
 
 const materialChat = (data) => {
