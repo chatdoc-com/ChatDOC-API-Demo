@@ -10,6 +10,9 @@ export const useSdk = ($pdfDom, $docId) => {
     sdk.on(EVENT_TYPES.CHAT_ICON_CLICKED, (data) => {
       $materialData.value = data;
     });
+    sdk.on(EVENT_TYPES.SELECTION_CHANGED, () => {
+      sdk.clearSources();
+    });
   };
 
   const getToken = async () => {
