@@ -168,15 +168,17 @@ const sendQuestion = async () => {
 
   try {
     let response = null;
+    const selectedMeta = $materialData.value
+      ? {
+          ...$materialData.value,
+          upload_id: $docId.value,
+        }
+      : null;
+    const isFromSelectText = !!selectedMeta;
     const data = {
       question: $currentQuestion.value,
-      selected_meta: $materialData.value
-        ? {
-            ...$materialData.value,
-            upload_id: $docId.value,
-          }
-        : null,
-      search_entire_doc: false,
+      selected_meta: selectedMeta,
+      search_entire_doc: !isFromSelectText,
       detailed_citation: true,
       // language: "english",
       history: history,
