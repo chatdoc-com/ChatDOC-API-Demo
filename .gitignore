@@ -32,3 +32,4 @@ stats.html
 
 .nvmrc
 projects/server/static/
+.env

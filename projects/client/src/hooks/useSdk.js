@@ -2,6 +2,8 @@ import { ref } from 'vue';
 import { initSDK, EVENT_TYPES } from '@chatdocai/chatdoc-sdk';
 import { getDocumentToken } from '../apis/api.js';
 const host = import.meta.env.VITE_SERVER_HOST || `${window.location.origin}/`;
+const pdfViewUrl =
+  import.meta.env.VITE_SDK_HOST || `${import.meta.env.API_HOST}/pdf-viewer/`;
 export const useSdk = ($pdfDom, $docId) => {
   const $materialData = ref();
   const addSdkEventListener = (sdk) => {
@@ -25,7 +27,7 @@ export const useSdk = ($pdfDom, $docId) => {
 
       const sdk = initSDK({
         el: $pdfDom.value,
-        url: import.meta.env.VITE_SDK_HOST,
+        url: pdfViewUrl,
         fileUrl: `${host}api/v1/documents/${$docId.value}/download`,
         getToken,
       });
