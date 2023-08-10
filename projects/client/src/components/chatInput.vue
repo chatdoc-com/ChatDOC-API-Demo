@@ -24,9 +24,9 @@
         </div>
         <div v-if="materialData" class="material-bar">
           <div class="material-content">
-            <div
-              class="content"
-              v-html="getHtmlByMd(materialData.material)"></div>
+            <el-scrollbar max-height="20vh" class="content" always>
+              <div v-html="getHtmlByMd(materialData.material)" />
+            </el-scrollbar>
             <el-icon
               class="material-cancel-handler"
               @click="handleCancelMaterial">
@@ -50,6 +50,7 @@
                 :autosize="{ minRows: 1, maxRows: 5 }"
                 :placeholder="placeholder"
                 :disabled="disabled"
+                @keypress.enter="submitQuestion"
                 @input="onInput" />
               <div ref="$inputHandler" class="input-handler">
                 <button
@@ -229,7 +230,7 @@ defineExpose({
   }
 
   .question-list {
-    padding-left: 0;
+    padding-left: 1em;
     font-size: 14px;
     list-style: decimal;
 
@@ -272,6 +273,32 @@ defineExpose({
     font-size: var(--chat-view-font-size, 14px);
     background: transparent;
 
+    :deep() {
+      :is(li, p, table, h1, h2, h3, h4, h5) {
+        margin: 10px 0 0;
+
+        &:first-child {
+          margin-top: 0;
+        }
+      }
+
+      table {
+        width: 100%;
+        border: 1px solid var(--el-border-color-primary) !important;
+        border-collapse: collapse;
+
+        :is(td, th) {
+          padding: 6px !important;
+          text-align: left;
+          border: 1px solid var(--el-border-color-primary) !important;
+        }
+      }
+
+      pre {
+        white-space: pre-wrap;
+      }
+    }
+
     &::after {
       position: absolute;
       top: 12px;
@@ -295,10 +322,16 @@ defineExpose({
     }
 
     > .content {
-      min-height: calc(var(--vh, 1vh) * 7);
-      max-height: calc(var(--vh, 1vh) * 15);
-      padding: 12px 8px 16px 0;
-      overflow: auto;
+      padding: 10px 10px 10px 0;
+
+      :deep(table) {
+        width: max-content;
+        max-width: max-content;
+      }
+
+      :deep(.el-scrollbar__bar) {
+        z-index: 2;
+      }
     }
   }
 

@@ -3,7 +3,7 @@ import router from './router';
 import ElementPlus from 'element-plus';
 import 'virtual:svg-icons-register';
 import 'element-plus/dist/index.css';
-import './style.css';
+import './style.scss';
 import App from './App.vue';
 
 const app = createApp(App);

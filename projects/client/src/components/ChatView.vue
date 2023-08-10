@@ -1,6 +1,7 @@
 <template>
   <div class="chat-page-container">
-    <div ref="$questionListWrapRef" class="chat-view-main">
+    <div class="header"></div>
+    <el-scrollbar ref="$questionListWrapRef" class="chat-view-main">
       <chat-list
         :disabled="$waitingAnswer"
         :file-info="fileInfo"
@@ -9,7 +10,7 @@
         :doc-name-dict="docNameDict"
         @material-chat="materialChat"
         @source-item-clicked="handleSourceItemClicked" />
-    </div>
+    </el-scrollbar>
     <chat-input
       id="chat-input"
       v-model:current-question="$currentQuestion"
@@ -25,6 +26,7 @@
 </template>
 <script setup>
 import { ref, computed, onMounted, watch, defineEmits } from 'vue';
+import { ElScrollbar } from 'element-plus';
 import {
   getRecommendedPrompts,
   fetchChatStream,
@@ -96,7 +98,7 @@ const materialChat = (data) => {
 const scrollToQuestionListBottom = () => {
   requestAnimationFrame(() => {
     const node = $questionListWrapRef.value;
-    node?.scroll(0, Number.MAX_SAFE_INTEGER);
+    node?.scrollTo(0, Number.MAX_SAFE_INTEGER);
   });
 };
 
@@ -168,16 +170,10 @@ const sendQuestion = async () => {
 
   try {
     let response = null;
-    const selectedMeta = $materialData.value
-      ? {
-          ...$materialData.value,
-          upload_id: $docId.value,
-        }
-      : null;
-    const isFromSelectText = !!selectedMeta;
+    const isFromSelectText = !!$materialData.value;
     const data = {
       question: $currentQuestion.value,
-      selected_meta: selectedMeta,
+      selected_meta: $materialData.value,
       search_entire_doc: !isFromSelectText,
       detailed_citation: true,
       // language: "english",
@@ -275,22 +271,18 @@ watch(
   overflow: hidden;
   border-left: 1px solid #8080803d;
 
-  .thread-drawer {
-    overflow: hidden;
-
-    .chat-view-main {
-      height: calc(
-        (var(--vh, 1vh) * 100) - var(--header-height) - var(--footerHeight)
-      );
-    }
+  .header {
+    height: var(--header-height);
+    border-bottom: 1px solid var(--el-border-color-primary);
   }
 }
 
 .chat-view-main {
   /* stylelint-disable */
-  height: calc((var(--vh, 1vh) * 100) - var(--footer-height));
+  height: calc(
+    (var(--vh, 1vh) * 100) - var(--footer-height) - var(--header-height)
+  );
   /* stylelint-enable */
-  overflow-y: scroll;
   box-shadow: 0 2px 12px 0 var(--el-text-color-slight);
 
   .answer {

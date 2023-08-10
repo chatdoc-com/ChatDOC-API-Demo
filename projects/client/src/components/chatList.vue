@@ -6,7 +6,9 @@
       :key="item.id"
       class="chat-item"
       :data-id="item.id">
-      <qustion-card :question="item.question" />
+      <qustion-card
+        :question="item.question"
+        @question-material-clicked="handleQuestionMaterialClicked(item)" />
       <answer-card
         :answer="item.answer"
         :doc-name-dict="docNameDict"
@@ -23,6 +25,7 @@
 import { ref } from 'vue';
 import QustionCard from './QustionCard.vue';
 import AnswerCard from './AnswerCard.vue';
+import { convertMaterialDataToSources } from '../utils/util.js';
 
 const $chatItemRefs = ref(null);
 
@@ -53,11 +56,21 @@ const handleSourceItemClicked = (source) => {
 const handleClickOnAnswerContent = ({ itemsWithPage }) => {
   emits('sourceItemClicked', { sources: itemsWithPage });
 };
+
+const handleQuestionMaterialClicked = (data) => {
+  const {
+    question: { materialData },
+  } = data;
+  const source = convertMaterialDataToSources(materialData);
+  emits('sourceItemClicked', { sources: [source] });
+};
 </script>
 
 <style lang="scss" scoped>
 .chat-list {
   flex: 1;
+  padding-left: 0;
+  list-style-type: none;
 
   .chat-item {
     border-bottom: 8px solid #e6e6e6;

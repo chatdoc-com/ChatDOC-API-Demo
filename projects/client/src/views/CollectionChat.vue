@@ -78,7 +78,7 @@ const getFileInfo = async () => {
 const onSourceItemClicked = async ({ sources }) => {
   const results = [];
 
-  sources.slice().forEach((source) => {
+  sources.forEach((source) => {
     const { page, rects, spreads = [] } = source;
     results.push({
       pageNumber: page + 1,
@@ -146,7 +146,7 @@ onBeforeUnmount(() => {
 }
 
 .collection-list {
-  width: 230px;
+  width: 250px;
   overflow: hidden;
 
   .name {

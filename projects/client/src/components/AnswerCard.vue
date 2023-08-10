@@ -21,7 +21,7 @@
         <div v-if="answer.sources?.length" class="pages-wrap">
           <div class="answer-source">
             <span class="answer-source-label">
-              <svg-icon name="pages" :size="24" />
+              <svg-icon name="pages" :size="24" color="#6b6c6f" />
             </span>
             <div class="answer-source-items">
               <span
@@ -142,6 +142,7 @@ const getTooltip = (source) => {
     .message {
       margin-top: -1em;
       font-size: var(--chat-view-font-size, 14px);
+      line-height: 24px;
     }
 
     .quote {

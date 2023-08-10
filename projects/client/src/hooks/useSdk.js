@@ -8,7 +8,7 @@ export const useSdk = ($pdfDom, $docId) => {
   const $materialData = ref();
   const addSdkEventListener = (sdk) => {
     sdk.on(EVENT_TYPES.CHAT_ICON_CLICKED, (data) => {
-      $materialData.value = data;
+      $materialData.value = { ...data, upload_id: $docId.value };
     });
     sdk.on(EVENT_TYPES.SELECTION_CHANGED, () => {
       sdk.clearSources();

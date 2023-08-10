@@ -131,7 +131,8 @@ const clearData = () => {
 
 const createCollect = async () => {
   try {
-    const name = `${$files.value[0].name.slice(0, 5)}_collection`;
+    const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const name = `collection_${date}`;
     const resp = await createCollection(name);
     $collectionId.value = resp.id;
   } catch (error) {

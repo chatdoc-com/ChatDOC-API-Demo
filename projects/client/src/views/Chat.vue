@@ -50,7 +50,7 @@ const getFileInfo = async () => {
 
 const onSourceItemClicked = ({ sources }) => {
   const results = [];
-  sources.slice().forEach((source) => {
+  sources.forEach((source) => {
     const { page, rects, spreads = [] } = source;
     results.push({
       pageNumber: page + 1,

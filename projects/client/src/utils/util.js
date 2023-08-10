@@ -86,6 +86,50 @@ export const convertSourceInfoToSources = (sourceInfo) => {
   return sources;
 };
 
+/**
+ * @typedef materialData {Object}
+ * @property material {string}
+ * @property rect {Object[]}
+ * @property upload_id {string}
+ * @property spreads {Object[]}
+ */
+
+/**
+ * Translate the sourceInfo data returned by the API
+ * @param materialData {materialData}
+ * @returns {SourcesItem}
+ */
+export const convertMaterialDataToSources = (materialData) => {
+  const { rects, upload_id: docId } = materialData;
+  const pages = rects.map((rect) => {
+    return rect.pageNumber - 1;
+  });
+  const source = {
+    docId,
+    page: pages[0],
+    rects: rects
+      .filter((rect) => {
+        return rect.pageNumber - 1 === pages[0];
+      })
+      .map((rect) => {
+        return rect.outline;
+      }),
+    spreads: pages.slice(1).map((page) => {
+      return {
+        page,
+        rects: rects
+          .filter((rect) => {
+            return rect.pageNumber - 1 === page;
+          })
+          .map((rect) => {
+            return rect.outline;
+          }),
+      };
+    }),
+  };
+  return source;
+};
+
 export function getTextWidth(text, font) {
   const canvas =
     getTextWidth.canvas ||

@@ -1,0 +1,149 @@
+:root {
+  --footer-height: 70px;
+  --header-height: 40px;
+  --el-color-primary: #6576db;
+  --el-text-color-bulb: #facf55;
+  --el-border-color-primary: #c7c7c7;
+
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      90deg,
+      #fff0 25%,
+      rgba(144, 147, 153, 60%) 25%,
+      rgba(144, 147, 153, 60%) 75%,
+      #fff0 75%
+    );
+
+    &:horizontal {
+      background: linear-gradient(
+        180deg,
+        #fff0 25%,
+        rgba(144, 147, 153, 60%) 25%,
+        rgba(144, 147, 153, 60%) 75%,
+        #fff0 75%
+      );
+    }
+  }
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+.flicker {
+  display: inline-block;
+  width: 4px;
+  font-size: 1em;
+  line-height: 1;
+  background-color: #333;
+  animation: flicker 1s steps(1, start) infinite;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.el-popper.is-dark {
+  max-width: 600px;
+  background: var(--el-color-primary);
+  border: 1px solid var(--el-color-primary);
+
+  .el-popper__arrow {
+    &::before {
+      background: var(--el-color-primary);
+      border: 1px solid var(--el-color-primary);
+    }
+  }
+}
+
+body,
+html,
+ul,
+ol,
+li,
+div,
+textarea,
+table,
+pre {
+  margin: 0;
+  padding: 0;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(
+      90deg,
+      #fff0 25%,
+      rgba(144, 147, 153, 0%) 25%,
+      rgba(144, 147, 153, 0%) 75%,
+      #fff0 75%
+    );
+
+    &:horizontal {
+      background: linear-gradient(
+        180deg,
+        #fff0 25%,
+        rgba(144, 147, 153, 0%) 25%,
+        rgba(144, 147, 153, 0%) 75%,
+        #fff0 75%
+      );
+    }
+
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      90deg,
+      #fff0 25%,
+      rgba(144, 147, 153, 60%) 25%,
+      rgba(144, 147, 153, 60%) 75%,
+      #fff0 75%
+    );
+
+    &:horizontal {
+      background: linear-gradient(
+        180deg,
+        #fff0 25%,
+        rgba(144, 147, 153, 60%) 25%,
+        rgba(144, 147, 153, 60%) 75%,
+        #fff0 75%
+      );
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    display: none;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}

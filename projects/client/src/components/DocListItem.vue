@@ -1,9 +1,11 @@
 <template>
   <div class="item-block" :class="{ active }" @click="onItemClick">
-    <p class="name-block">
-      <svg-icon name="pdf" :size="20" class="file-item-name-icon" />
-      <span class="name">{{ docInfo.name }}</span>
-    </p>
+    <el-tooltip :content="docInfo.name" placement="top" :show-after="500">
+      <p class="name-block">
+        <svg-icon name="pdf" :size="20" class="file-item-name-icon" />
+        <span class="name">{{ docInfo.name }}</span>
+      </p>
+    </el-tooltip>
     <p class="status-block">
       <svg-icon
         v-if="$isShowStatusIcon.success"
@@ -77,6 +79,7 @@ const onItemClick = () => {
 .name {
   display: inline-block;
   overflow: hidden;
+  font-size: 14px;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
