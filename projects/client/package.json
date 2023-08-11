@@ -6,6 +6,8 @@
     "dev": "vite --force",
     "build": "vite build",
     "preview": "vite preview",
+    "test:e2e": "cypress open",
+    "test": "npm run test:e2e",
     "lint": "npm run lint:eslint && npm run lint:stylelint && npm run lint:prettier",
     "lint:eslint": "eslint --cache --fix \"src/**/*.{js,vue}\"",
     "lint:stylelint": "stylelint --cache --fix \"src/**/*.{css,scss,vue}\"",
@@ -39,6 +41,9 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",
+    "cypress": "^12.17.3",
+    "cypress-file-upload": "^5.0.8",
+    "eslint-plugin-cypress": "^2.14.0",
     "vite": "^4.3.9"
   }
 }

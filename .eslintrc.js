@@ -4,6 +4,7 @@ module.exports = {
     browser: true,
     es2022: true,
     node: true,
+    "cypress/globals": true,
   },
   globals: {
     defineProps: 'readonly',
@@ -16,7 +17,7 @@ module.exports = {
     'eslint:recommended',
     '@vue/prettier',
   ],
-  plugins: ['vue'],
+  plugins: ['vue', 'cypress'],
   rules: {
     curly: ['error', 'all'],
     'vue/component-name-in-template-casing': ['error', 'kebab-case'],

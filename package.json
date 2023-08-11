@@ -6,6 +6,7 @@
   "scripts": {
     "client:dev": "pnpm --filter chatdoc-api-demo-client run dev",
     "client:build": "pnpm --filter chatdoc-api-demo-client run build",
+    "client:test": "pnpm --filter chatdoc-api-demo-client run test",
     "server:dev": "pnpm --filter chatdoc-api-demo-server run start:dev",
     "start": "npm-run-all --parallel client:dev server:dev",
     "test": "echo \"Error: no test specified\" && exit 1",
