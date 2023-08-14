@@ -1,10 +1,11 @@
 <template>
-  <ol v-if="chatListFirstLoaded" class="chat-list">
+  <ol v-if="chatListFirstLoaded" class="chat-list" data-test="chat-list">
     <li
       v-for="item of chatList"
       ref="$chatItemRefs"
       :key="item.id"
       class="chat-item"
+      data-test="chat-item"
       :data-id="item.id">
       <qustion-card
         :question="item.question"

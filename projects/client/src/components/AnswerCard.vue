@@ -16,6 +16,7 @@
     <div class="right">
       <div
         class="message"
+        data-test="answer-message"
         v-html="getHtmlByMd(answer.content, true, answer.loading)"></div>
       <div class="right-bottom">
         <div v-if="answer.sources?.length" class="pages-wrap">

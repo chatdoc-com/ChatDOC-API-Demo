@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div ref="$pdfDom" class="pdf-container"></div>
+    <div ref="$pdfDom" class="pdf-container" data-test="sdk-container"></div>
     <div class="chat-container">
       <chat-view
         v-if="$fileInfo"

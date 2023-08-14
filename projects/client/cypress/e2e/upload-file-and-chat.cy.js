@@ -19,82 +19,57 @@ describe('Upload files and chat.', async () => {
 
     // Chat page
     // Find the first page of the PDF
-    cy.wait(5000)
-      .get('.pdf-viewer-js-sdk-iframe')
+    cy.url()
+      .should('include', '/chat')
+      .get('[data-test="sdk-container"] iframe')
       .should('be.visible')
-      .then(($iframe) => {
-        return cy
-          .wrap($iframe)
-          .its('0.contentDocument.body')
-          .should('not.be.empty');
-      })
-      .then(cy.wrap)
-      .wait(200)
+      .its('0.contentDocument.body')
+      .should('not.be.empty')
       .find('.page[data-page-number="1"]')
+      .should('have.attr', 'data-loaded', 'true')
       .should('be.visible')
-      .then(cy.wrap)
       .find('canvas')
       .should('be.visible')
-      .then(cy.wrap)
-      .wait(200)
-
       // Simulate user mouse movement.
       .trigger('mousemove', { which: 1, offsetX: 200, offsetY: 270 })
       .trigger('mousemove', { which: 1, offsetX: 202, offsetY: 272 })
       .trigger('mousemove', { which: 1, offsetX: 200, offsetY: 270 })
-
       .trigger('mousemove', { which: 1, offsetX: 430, offsetY: 710 })
       .trigger('mousemove', { which: 1, offsetX: 433, offsetY: 713 })
       .trigger('mousemove', { which: 1, offsetX: 435, offsetY: 215 })
-
       // Find the chat icon and click
       .closest('.pdf-document-viewer')
       .then((pdfContainer) => {
         return pdfContainer.children('.dissociative');
       })
       .should('be.visible')
-      .then(cy.wrap)
-      .wait(200)
       .click()
       // Material content visible
       .then(() => {
-        return cy.get('.material-content');
+        return cy.get('[data-test="material-content"]');
       })
       .should('be.visible')
-
       // Find the question input box and enter the content
       .then(() => {
-        return cy.get('.question-container textarea');
+        return cy.get('[data-test="question-container-input"]');
       })
       .should('be.visible')
-      .then(cy.wrap)
       .type('Summary in one sentence')
-
       // Find the submit button for the question and click it
       .then(() => {
-        return cy.get('.submit-question-icon');
+        return cy.get('[data-test="submit-question-button"]');
       })
       .should('be.visible')
-      .then(cy.wrap)
-      .closest('.input-handler-icon')
-      .should('be.visible')
-      .then(($el) => {
-        return cy.wrap($el);
-      })
       .click()
-
       // Find the first chat in the chat list
       .then(() => {
-        cy.get('.chat-list .chat-item:first-child');
+        cy.get('[data-test="chat-list"] [data-test="chat-item"]:first-child');
       })
       .should('be.visible')
-      .wait(10)
-
       // Check the content of the answer
       .then(($firstChatItem) => {
-        return $firstChatItem.find('.answer .message');
+        return $firstChatItem.find('[data-test="answer-message"]');
       })
-      .then(cy.wrap)
       .should('not.be.empty');
   });
 });

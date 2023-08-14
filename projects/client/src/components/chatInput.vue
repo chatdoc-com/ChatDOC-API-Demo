@@ -23,7 +23,7 @@
           </ul>
         </div>
         <div v-if="materialData" class="material-bar">
-          <div class="material-content">
+          <div class="material-content" data-test="material-content">
             <el-scrollbar max-height="20vh" class="content" always>
               <div v-html="getHtmlByMd(materialData.material)" />
             </el-scrollbar>
@@ -45,6 +45,7 @@
               :class="{ disabled: disabled }">
               <el-input
                 ref="$inputRef"
+                data-test="question-container-input"
                 :model-value="currentQuestion"
                 type="textarea"
                 :autosize="{ minRows: 1, maxRows: 5 }"
@@ -65,6 +66,7 @@
                 </button>
                 <button
                   class="input-handler-icon"
+                  data-test="submit-question-button"
                   :disabled="disabled"
                   @click="submitQuestion">
                   <svg-icon
