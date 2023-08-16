@@ -178,14 +178,15 @@ const handleFileUpload = async (file) => {
     const isValid = await validateFile(file.raw);
     if (isValid) {
       $upload.value.submit();
-      $loading.value = false;
       $progress.value = 1;
     } else {
+      $loading.value = false;
       $upload.value.clearFiles();
     }
   }
   if (file.status === 'success') {
     const id = file.response.data.id;
+    $loading.value = false;
     router.push({ name: 'chat', params: { id } });
     clearData();
   }
@@ -236,9 +237,9 @@ watch(
     if (allFilesValidated()) {
       await createCollect();
       $collectionUpload.value.submit();
-      $loading.value = false;
       $progress.value = 1;
     } else {
+      $loading.value = false;
       clearData();
     }
   },

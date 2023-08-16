@@ -66,7 +66,7 @@ export async function chatWithDocumentAPI(uploadId, chatParams) {
     },
     body: JSON.stringify(chatParams),
   });
-  return response.body;
+  return response;
 }
 
 export async function getSuggestedQuestionsAPI(uploadId) {

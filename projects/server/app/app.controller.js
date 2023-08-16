@@ -50,9 +50,9 @@ class AppController {
     if (!existsSync('upload')) {
       mkdirSync('upload');
     }
-    const newPath = `upload/${apiResponse.data.id}${path.extname(
-      file.originalName,
-    )}`;
+    const newPath = `upload/${apiResponse.data.id}${path
+      .extname(file.originalName)
+      .toLowerCase()}`;
     writeFileSync(newPath, buffer);
 
     ctx.body = apiResponse;
@@ -91,9 +91,9 @@ class AppController {
     if (dataString) {
       chatParams = { ...ctx.request.body, ...JSON.parse(dataString) };
     }
-    const responseStream = await chatWithDocumentAPI(uploadId, chatParams);
-
-    ctx.body = Readable.from(responseStream);
+    const response = await chatWithDocumentAPI(uploadId, chatParams);
+    ctx.body = Readable.from(response.body);
+    ctx.status = response.status;
   }
 
   async downloadDocument(ctx) {
