@@ -3,16 +3,9 @@ import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import { readFileSync } from 'fs';
-import * as dotenv from 'dotenv';
-dotenv.config({
-  path: '../../.env',
-});
+import ENV from '../../env.mjs';
 
-if (!process.env.API_HOST && process.env.API_KEY) {
-  process.env.API_HOST = process.env.API_KEY.startsWith('ck')
-    ? 'https://api.paodingjiewen.com'
-    : 'https://api.chatdoc.com';
-}
+process.env.API_HOST = ENV.API_HOST;
 
 const env = loadEnv('development', process.cwd());
 export default defineConfig({

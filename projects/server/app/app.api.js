@@ -1,7 +1,7 @@
 import { getAxiosInstance } from '../utils/http.js';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
-import ENV from '../utils/env.js';
+import ENV from '../../../env.mjs';
 
 const proxyHost = ENV.API_HOST;
 const proxyApiKey = ENV.API_KEY;
