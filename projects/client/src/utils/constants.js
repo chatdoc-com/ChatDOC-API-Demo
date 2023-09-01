@@ -23,3 +23,20 @@ export const DOC_STATUS_MESSAGE = {
   [DOC_ERROR_STATUS.READ_TMP_FILE_ERROR]: 'Temporary file reading error.',
   [DOC_ERROR_STATUS.OCR_PAGE_LIMIT_ERROR]: 'OCR page limit exceeded.',
 };
+
+export const DOC_STATUS_SHORT_MESSAGE = {
+  [DOC_ERROR_STATUS.TEXT_PARSE_ERROR]: 'Text embedding failed',
+  [DOC_ERROR_STATUS.ELEMENT_PARED_ERROR]: 'Element embedding failed',
+  [DOC_ERROR_STATUS.EXCEED_TOKENS_ERROR]: 'Token limit exceeded',
+  [DOC_ERROR_STATUS.READ_TMP_FILE_ERROR]: 'Temporary file reading error',
+};
+
+export const FILE_STATUS = {
+  PARSED: '300',
+};
+
+export const FILE_LIMIT = {
+  MAX_SIZE: 10, // MB
+  MAX_PAGES: 10,
+  COLLECTION_FILES_LIMIT: 30,
+};

@@ -8,6 +8,7 @@
         :file-info="$fileInfo"
         :material-data="$materialData"
         :upload-id="$docId"
+        :suggested-questions="$suggestedQuestions"
         @source-item-clicked="onSourceItemClicked" />
     </div>
   </div>
@@ -15,9 +16,9 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
-import { fetchFileInfo } from '../apis/api.js';
+import { fetchFileInfo, getRecommendedPrompts } from '../apis/api.js';
 import ChatView from '../components/ChatView.vue';
-import { FILE_STATUS } from '../constant.js';
+import { FILE_STATUS } from '../utils/constants.js';
 import { useSdk } from '../hooks/useSdk';
 const route = useRoute();
 const $pdfDom = ref(null);
@@ -32,6 +33,7 @@ const $fileInfo = ref(null);
 const $fileParsed = computed(() => {
   return $fileInfo.value && $fileInfo.value.status >= FILE_STATUS.PARSED;
 });
+const $suggestedQuestions = ref([]);
 let timeout = null;
 
 const getFileInfo = async () => {
@@ -45,6 +47,7 @@ const getFileInfo = async () => {
   } else {
     clearTimeout(timeout);
     timeout = null;
+    $suggestedQuestions.value = await getRecommendedPrompts($docId.value);
   }
 };
 

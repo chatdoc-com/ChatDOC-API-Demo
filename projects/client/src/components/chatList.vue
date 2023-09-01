@@ -31,10 +31,6 @@ import { convertMaterialDataToSources } from '../utils/util.js';
 const $chatItemRefs = ref(null);
 
 defineProps({
-  fileInfo: {
-    type: Object,
-    required: true,
-  },
   chatList: {
     type: Array,
     default: () => [],

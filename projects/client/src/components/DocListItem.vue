@@ -7,26 +7,31 @@
       </p>
     </el-tooltip>
     <p class="status-block">
-      <svg-icon
-        v-if="$isShowStatusIcon.success"
-        name="doc-ok"
-        color="#9ace53" />
-      <svg-icon
-        v-else-if="$isShowStatusIcon.parsing"
-        name="doc-ing"
-        class="doc-ing-icon" />
-      <svg-icon
-        v-else-if="$isShowStatusIcon.error"
-        name="doc-error"
-        class="doc-error"
-        color="#E6492D" />
+      <el-tooltip
+        :content="$docStatusTooltip"
+        placement="top"
+        :show-after="500">
+        <svg-icon
+          v-if="$isShowStatusIcon.success"
+          name="doc-ok"
+          color="#9ace53" />
+        <svg-icon
+          v-else-if="$isShowStatusIcon.parsing"
+          name="doc-ing"
+          class="doc-ing-icon" />
+        <svg-icon
+          v-else-if="$isShowStatusIcon.error"
+          name="doc-error"
+          class="doc-error"
+          color="#E6492D" />
+      </el-tooltip>
     </p>
   </div>
 </template>
 <script setup>
 import { computed, defineEmits } from 'vue';
 import SvgIcon from './SvgIcon.vue';
-import { FILE_STATUS } from '../constant';
+import { FILE_STATUS, DOC_STATUS_SHORT_MESSAGE } from '../utils/constants.js';
 const props = defineProps({
   docInfo: {
     type: Object,
@@ -41,11 +46,26 @@ const props = defineProps({
 const emits = defineEmits(['onClicked']);
 const $isShowStatusIcon = computed(() => {
   return {
-    success: !props.docInfo.errorInfo,
+    success:
+      props.docInfo.status >= FILE_STATUS.PARSED && !props.docInfo.errorInfo,
     parsing:
       props.docInfo.status > 0 && props.docInfo.status < FILE_STATUS.PARSED,
     error: props.docInfo.status < 0,
   };
+});
+const $docStatusTooltip = computed(() => {
+  if ($isShowStatusIcon.value.success) {
+    return 'Analysis completed';
+  }
+  if ($isShowStatusIcon.value.parsing) {
+    return 'Analyzing';
+  }
+  if ($isShowStatusIcon.value.error) {
+    return (
+      DOC_STATUS_SHORT_MESSAGE[props.docInfo.status] || 'File processing failed'
+    );
+  }
+  return '';
 });
 
 const onItemClick = () => {
@@ -74,6 +94,10 @@ const onItemClick = () => {
   display: flex;
   justify-content: end;
   margin: 0;
+
+  .doc-ing-icon {
+    animation: rotate 1.5s linear infinite;
+  }
 }
 
 .name {

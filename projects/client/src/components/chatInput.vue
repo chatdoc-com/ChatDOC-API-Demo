@@ -62,7 +62,10 @@
                     name="bulb"
                     class="recommend-question-icon"
                     :size="24"
-                    :color="showRecommendList && !disabled ? '#facf55' : ''" />
+                    :class="{
+                      disabled: disabled,
+                      active: showRecommendList && !disabled,
+                    }" />
                 </button>
                 <button
                   class="input-handler-icon"
@@ -146,6 +149,7 @@ onMounted(() => {
   const { padding } = window.getComputedStyle($questionContainer.value);
   $inputHandlerWidth.value =
     Number.parseInt(width) + Number.parseInt(right) + Number.parseInt(padding);
+  setMultiRow(props.placeholder);
 });
 
 const setMultiRow = throttle((text) => {
@@ -164,6 +168,12 @@ const onInput = (val) => {
 
 watch(
   () => props.currentQuestion,
+  (val) => {
+    setMultiRow(val);
+  },
+);
+watch(
+  () => props.placeholder,
   (val) => {
     setMultiRow(val);
   },
@@ -377,7 +387,7 @@ defineExpose({
     }
 
     .el-textarea {
-      padding-bottom: 48px !important;
+      padding-bottom: 40px !important;
     }
   }
 
@@ -461,20 +471,29 @@ defineExpose({
         }
 
         .recommend-question-icon {
-          cursor: pointer;
+          color: #6b6c6f;
           transition: color 0.3s;
 
-          &:hover {
-            color: var(--el-color-primary);
+          &:not(.disabled) {
+            cursor: pointer;
+
+            &:hover,
+            &.active {
+              color: #facf55;
+            }
           }
         }
 
         .submit-question-icon {
-          cursor: pointer;
+          color: #6b6c6f;
           transition: color 0.3s;
 
-          &:hover {
-            color: var(--el-color-primary);
+          &:not(.disabled) {
+            cursor: pointer;
+
+            &:hover {
+              color: var(--el-color-primary);
+            }
           }
         }
       }

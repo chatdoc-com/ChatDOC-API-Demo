@@ -101,7 +101,7 @@ import SvgIcon from '../components/SvgIcon.vue';
 import { getUploadUrl, createCollection } from '../apis/api.js';
 import { useRouter } from 'vue-router';
 import { validateFileType, validateFileSize } from '../utils/file.js';
-import { FILE_LIMIT } from '../constant';
+import { FILE_LIMIT } from '../utils/constants.js';
 
 const router = useRouter();
 const $collectionUpload = ref(null);

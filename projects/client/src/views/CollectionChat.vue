@@ -12,7 +12,15 @@
       </el-scrollbar>
       <div class="list-container"></div>
     </div>
-    <div ref="$pdfDom" class="pdf-container"></div>
+    <div
+      v-show="$fileInfo && $fileInfo.status >= FILE_STATUS.PARSED"
+      ref="$pdfDom"
+      class="pdf-container"></div>
+    <div
+      v-if="$fileInfo && $fileInfo.status < FILE_STATUS.PARSED"
+      class="empty-container">
+      <empty-view :file-info="$fileInfo" />
+    </div>
     <div class="chat-container">
       <chat-view
         v-if="$fileInfo"
@@ -21,19 +29,21 @@
         :material-data="$materialData"
         :upload-id="$collectionId"
         :doc-name-dict="$collectionDocNameDict"
+        :suggested-questions="$suggestedQuestions"
         @source-item-clicked="onSourceItemClicked" />
     </div>
   </div>
 </template>
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import { fetchFileInfo } from '../apis/api.js';
+import { fetchFileInfo, getRecommendedPrompts } from '../apis/api.js';
 import ChatView from '../components/ChatView.vue';
-import { FILE_STATUS } from '../constant.js';
+import { FILE_STATUS } from '../utils/constants.js';
 import { useSdk } from '../hooks/useSdk';
 import DocListItem from '../components/DocListItem.vue';
+import EmptyView from '../components/EmptyView.vue';
 
 const route = useRoute();
 const $fileList = ref([]);
@@ -54,26 +64,20 @@ const { $materialData, initSDK, setFileUrl, EVENT_TYPES } = useSdk(
   $docId,
 );
 let sdk = null;
-const $fileInfo = ref(null);
-const $fileParsed = computed(() => {
-  return $fileInfo.value && $fileInfo.value.status >= FILE_STATUS.PARSED;
+const $fileInfo = computed(() => {
+  return $fileList.value.find((file) => file.id === $docId.value);
 });
+const $fileParsed = computed(() => {
+  const hasPassed = $fileList.value.find(
+    (file) => file.status >= FILE_STATUS.PARSED,
+  );
+  const hasPassing = $fileList.value.find(
+    (file) => file.status > 0 && file.status < FILE_STATUS.PARSED,
+  );
+  return hasPassed && !hasPassing;
+});
+const $suggestedQuestions = ref([]);
 const $collectionName = ref('');
-let timeout = null;
-
-const getFileInfo = async () => {
-  const data = await fetchFileInfo($docId.value);
-  $fileInfo.value = data;
-
-  if (!$fileParsed.value && data.status > 0) {
-    timeout = setTimeout(() => {
-      getFileInfo();
-    }, 10000);
-  } else {
-    clearTimeout(timeout);
-    timeout = null;
-  }
-};
 
 const onSourceItemClicked = async ({ sources }) => {
   const results = [];
@@ -102,10 +106,30 @@ const onSourceItemClicked = async ({ sources }) => {
   sdk.drawSources(results);
 };
 
-const changeFile = (docId) => {
+const changeFile = async (docId) => {
   $docId.value = docId;
   setFileUrl(sdk, docId);
-  getFileInfo();
+};
+
+const pollingFetchFileList = async () => {
+  let hasProcessing = $fileList.value.find(
+    (file) => file.status > 0 && file.status < FILE_STATUS.PARSED,
+  );
+  if (hasProcessing) {
+    const intervalId = setInterval(async () => {
+      const resp = await fetchFileInfo($collectionId.value);
+      $fileList.value = resp.documents;
+      hasProcessing = $fileList.value.find(
+        (file) => file.status > 0 && file.status < FILE_STATUS.PARSED,
+      );
+      if (!hasProcessing) {
+        clearInterval(intervalId);
+        $suggestedQuestions.value = await getRecommendedPrompts(
+          $collectionId.value,
+        );
+      }
+    }, 10000);
+  }
 };
 
 onMounted(async () => {
@@ -122,18 +146,16 @@ onMounted(async () => {
         $sources.value = [];
       }
     });
-    getFileInfo();
+    pollingFetchFileList();
+    $suggestedQuestions.value = await getRecommendedPrompts(
+      $collectionId.value,
+    );
   } catch (error) {
     ElMessage({
       message: error.message,
       type: 'error',
     });
   }
-});
-
-onBeforeUnmount(() => {
-  clearTimeout(timeout);
-  timeout = null;
 });
 </script>
 <style scoped lang="scss">
@@ -148,6 +170,7 @@ onBeforeUnmount(() => {
 .collection-list {
   width: 250px;
   overflow: hidden;
+  border-right: 1px solid #8080803d;
 
   .name {
     display: flex;
@@ -171,6 +194,17 @@ onBeforeUnmount(() => {
 .pdf-container {
   flex: 1;
   overflow: hidden;
+}
+
+.empty-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  overflow: hidden;
+  background-color: #f5f5f5;
 }
 
 .chat-container {

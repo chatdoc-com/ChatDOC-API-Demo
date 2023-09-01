@@ -1,5 +1,5 @@
 import { loadDoc, DocManager } from './pdfium';
-import { FILE_LIMIT } from '../constant';
+import { FILE_LIMIT } from '../utils/constants.js';
 
 const accept = ['pdf'];
 export const validateFileType = (file) => {

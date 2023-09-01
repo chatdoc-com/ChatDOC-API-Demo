@@ -4,7 +4,6 @@
     <el-scrollbar ref="$questionListWrapRef" class="chat-view-main">
       <chat-list
         :disabled="$waitingAnswer"
-        :file-info="fileInfo"
         :chat-list="$chatList"
         :chat-list-first-loaded="true"
         :doc-name-dict="docNameDict"
@@ -25,13 +24,9 @@
   </div>
 </template>
 <script setup>
-import { ref, computed, onMounted, watch, defineEmits } from 'vue';
+import { ref, computed, watch, defineEmits } from 'vue';
 import { ElScrollbar } from 'element-plus';
-import {
-  getRecommendedPrompts,
-  fetchChatStream,
-  readStream,
-} from '../apis/api.js';
+import { fetchChatStream, readStream } from '../apis/api.js';
 import ChatList from './chatList.vue';
 import chatInput from './chatInput.vue';
 import { convertSourceInfoToSources } from '../utils/util.js';
@@ -57,6 +52,10 @@ const props = defineProps({
     type: Object,
     default: () => null,
   },
+  suggestedQuestions: {
+    type: Array,
+    default: () => [],
+  },
 });
 
 const emits = defineEmits(['sourceItemClicked']);
@@ -67,12 +66,15 @@ const $showRecommendList = ref(true);
 
 // meta data from pdf selection
 const $materialData = ref(null);
-const $questionList = ref([]);
 const $waitingAnswer = ref(false);
 const $questionListWrapRef = ref(null);
 
-const $docId = computed(() => {
-  return props.fileInfo.id;
+const $questionList = computed(() => {
+  return props.suggestedQuestions
+    .map((str) => {
+      return str.replace(/\d\./, '').trim();
+    })
+    .filter((str) => !!str);
 });
 
 const $placeholder = computed(() => {
@@ -82,7 +84,7 @@ const $placeholder = computed(() => {
         DOC_STATUS_MESSAGE[props.fileInfo.status] || 'File processing failed.'
       );
     } else {
-      return 'You may take a sip of your coffee while I am working hard on processing the file.';
+      return 'Please wait for document analysis results';
     }
   } else {
     return '+ New chat.';
@@ -100,16 +102,6 @@ const scrollToQuestionListBottom = () => {
     const node = $questionListWrapRef.value;
     node?.scrollTo(0, Number.MAX_SAFE_INTEGER);
   });
-};
-
-const getQuestionList = async () => {
-  let prompts = await getRecommendedPrompts($docId.value);
-  prompts = prompts
-    .map((str) => {
-      return str.replace(/\d\./, '').trim();
-    })
-    .filter((str) => !!str);
-  $questionList.value = prompts;
 };
 
 const initChatItem = () => {
@@ -175,7 +167,6 @@ const sendQuestion = async () => {
       question: $currentQuestion.value,
       selected_meta: $materialData.value,
       search_entire_doc: !isFromSelectText,
-      detailed_citation: true,
       // language: "english",
       history: history,
     };
@@ -244,23 +235,10 @@ const handleSourceItemClicked = (source) => {
   emits('sourceItemClicked', source);
 };
 
-onMounted(async () => {
-  await getQuestionList();
-});
-
 watch(
   () => props.materialData,
   (value) => {
     $materialData.value = value;
-  },
-);
-
-watch(
-  () => props.disabled,
-  () => {
-    if (!props.disabled && $questionList.value.length === 0) {
-      getQuestionList();
-    }
   },
 );
 </script>

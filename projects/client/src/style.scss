@@ -147,3 +147,29 @@ pre {
     background: transparent;
   }
 }
+
+.dot-loading {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+  line-height: 1;
+  text-align: left;
+  vertical-align: -0.25ex;
+
+  &::before {
+    display: block;
+    white-space: pre-wrap;
+    animation: dot-loading 2s infinite step-start both;
+    content: '...\A..\A.';
+  }
+}
+
+@keyframes dot-loading {
+  33% {
+    transform: translateY(-2em);
+  }
+
+  66% {
+    transform: translateY(-1em);
+  }
+}
