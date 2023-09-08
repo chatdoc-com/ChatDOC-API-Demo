@@ -16,7 +16,7 @@ export const DOC_STATUS_MESSAGE = {
   [DOC_ERROR_STATUS.ELEMENT_PARED_ERROR]: 'Element embedding failed.',
   [DOC_ERROR_STATUS.EXCEED_SIZE_ERROR]: 'File size limit exceeded.',
   [DOC_ERROR_STATUS.EXCEED_TOKENS_ERROR]:
-    'The content of a single page in a document must not exceed 4500 tokens.',
+    'The content of a single page in a document must not exceed 14,000 tokens.',
   [DOC_ERROR_STATUS.PAGE_LIMIT_ERROR]: 'Page limit exceeded.',
   [DOC_ERROR_STATUS.TITLE_COMPLETE_ERROR]:
     'ChatGPT failed to generate a title by summarizing the article.',
