@@ -60,29 +60,12 @@ export const fetchChatStream = async (id, data) => {
   return response;
 };
 
-const toJson = (dataString) => {
-  const answerPattern = /'answer': '([^']*)'/;
-
-  const answerResult = dataString.match(answerPattern);
-  let answer = '',
-    id,
-    source_info;
-  if (answerResult && answerResult[1]) {
-    answer = answerResult[1].replace(/\\n/g, '\n');
-  }
-  if (dataString.indexOf('source_info') > -1) {
-    const validJsonString = dataString.replace(/'/g, '"').replace(/^data:/, '');
-    return JSON.parse(validJsonString);
-  }
-  return { answer, id, source_info };
-};
-
 export const readStream = (readableStream, readable) => {
   const reader = readableStream.getReader();
   function onParse(event) {
     if (event.type === 'event') {
       try {
-        const { answer, id, source_info } = toJson(event.data);
+        const { answer, id, source_info } = JSON.parse(event.data);
         readable(answer, source_info, id);
       } catch (e) {
         console.error(e);

@@ -5,7 +5,7 @@ import ENV from '../../../env.mjs';
 
 const proxyHost = ENV.API_HOST;
 const proxyApiKey = ENV.API_KEY;
-const prefix = '/api/v1/';
+const prefix = '/api/v2/';
 const baseURL = `${proxyHost}${prefix}`;
 const options = {
   baseURL,
