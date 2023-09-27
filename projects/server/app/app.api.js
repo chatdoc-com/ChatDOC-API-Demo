@@ -21,17 +21,15 @@ export async function createDocCollectionAPI(name) {
   });
 }
 
-export async function uploadDocumentsAPI(collectionId, file) {
+export async function uploadDocumentsAPI(file, body) {
   const formData = new FormData();
 
   formData.append('file', file.stream, file.originalName);
-
-  const params = {
-    collection_id: collectionId,
-  };
-  return http.post('documents/upload', formData, {
-    params,
-  });
+  formData.append('package_type', body.package_type);
+  if (body.collection_id) {
+    formData.append('collection_id', body.collection_id);
+  }
+  return http.post('documents/upload', formData);
 }
 
 export async function getDocByUploadIdAPI(uploadId) {

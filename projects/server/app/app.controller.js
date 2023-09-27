@@ -27,7 +27,6 @@ class AppController {
   }
 
   async uploadDocuments(ctx) {
-    const { collection_id: collectionId } = ctx.query;
     let file = ctx.file;
     if (!file) {
       throwAppError('The file cannot be empty.');
@@ -45,7 +44,7 @@ class AppController {
     });
 
     const apiResponse = await sendRequestWithCatch(() =>
-      uploadDocumentsAPI(collectionId, file),
+      uploadDocumentsAPI(file, ctx.request.body),
     );
     if (!existsSync('upload')) {
       mkdirSync('upload');

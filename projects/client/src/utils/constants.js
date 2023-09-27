@@ -40,3 +40,18 @@ export const FILE_LIMIT = {
   MAX_PAGES: 10,
   COLLECTION_FILES_LIMIT: 30,
 };
+
+export const PACKAGE_TYPES = [
+  {
+    value: 'elite',
+    name: 'Elite',
+  },
+  {
+    value: 'basic',
+    name: 'Basic',
+  },
+  {
+    value: 'lite',
+    name: 'Lite',
+  },
+];

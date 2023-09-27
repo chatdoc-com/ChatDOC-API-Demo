@@ -1,5 +1,5 @@
 <template>
-  <div class="main-layout">
+  <div class="main-layout" @click="handleClick">
     <div class="header">
       <img
         crossorigin="anonymous"
@@ -11,15 +11,26 @@
       <span class="title">Demo</span>
     </div>
     <div class="upload-demo">
+      <div class="package-wrap">
+        <div v-if="$packageError" class="error-tip" @click.stop>
+          {{ $packageError }}
+        </div>
+        <package-select v-model:value="$package" />
+      </div>
+
       <div class="upload-input">
         <div>
           <el-upload
             ref="$upload"
             accept=".pdf"
             drag
+            :data="{
+              package_type: $package,
+            }"
             :multiple="false"
-            :action="$uploadUrl"
+            :action="getUploadUrl()"
             :on-change="handleFileUpload"
+            :on-error="handleError"
             :on-progress="handleProgress"
             :show-file-list="false"
             :auto-upload="false">
@@ -48,13 +59,18 @@
             v-model:file-list="$files"
             drag
             accept=".pdf"
+            :data="{
+              package_type: $package,
+              collection_id: $collectionId,
+            }"
             :limit="FILE_LIMIT.COLLECTION_FILES_LIMIT"
             :multiple="true"
-            :action="$uploadUrl"
+            :action="getUploadUrl()"
             :show-file-list="false"
             :on-exceed="handleExceed"
             :on-change="handleMultiFileChange"
             :on-progress="handleProgress"
+            :on-error="handleError"
             :auto-upload="false">
             <el-icon
               v-if="$loading && $isCollection"
@@ -102,6 +118,7 @@ import { getUploadUrl, createCollection } from '../apis/api.js';
 import { useRouter } from 'vue-router';
 import { validateFileType, validateFileSize } from '../utils/file.js';
 import { FILE_LIMIT } from '../utils/constants.js';
+import PackageSelect from '../components/PackageSelect.vue';
 
 const router = useRouter();
 const $collectionUpload = ref(null);
@@ -109,16 +126,17 @@ const $upload = ref(null);
 const $collectionId = ref('');
 const $files = ref([]);
 const $validatedFilesCount = ref(0);
-const $uploadUrl = computed(() => {
-  return getUploadUrl($collectionId.value);
-});
+
 const $progress = ref(0);
 const $uploadFiles = ref(0);
 const $loading = ref(false);
+const $packageError = ref('');
 
 const $isCollection = computed(() => {
   return $files.value.length > 0;
 });
+
+const $package = ref('elite');
 
 const clearData = () => {
   $collectionId.value = null;
@@ -224,6 +242,24 @@ const handleProgress = (e, file, files) => {
   $progress.value = percent;
 };
 
+const handleError = (error) => {
+  const { message, detail } = JSON.parse(error.message);
+  clearData();
+  if (message.includes('400')) {
+    $packageError.value = detail || message;
+  } else {
+    ElMessage({
+      message: detail || message,
+      type: 'error',
+    });
+  }
+};
+const handleClick = () => {
+  $packageError.value = '';
+};
+
+watch(() => $package.value, handleClick);
+
 watch(
   () => $files.value,
   async () => {
@@ -249,6 +285,7 @@ watch(
 .main-layout {
   display: flex;
   flex-direction: column;
+  align-items: center;
   height: 100%;
   background: url('../assets/home-bg.png') no-repeat right bottom,
     linear-gradient(180deg, #f6faff 0%, #eaf3ff 100%);
@@ -256,6 +293,8 @@ watch(
   .header {
     display: flex;
     align-items: center;
+    box-sizing: border-box;
+    width: 100%;
     height: 64px;
     padding-left: 100px;
 
@@ -272,7 +311,34 @@ watch(
     }
   }
 
+  .package-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    .error-tip {
+      position: absolute;
+      top: -135px;
+      margin: 40px auto;
+      margin-bottom: 76px;
+      padding: 13px 16px;
+      color: #f6ab2f;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 24px;
+      background: linear-gradient(
+          0deg,
+          rgba(246, 171, 47, 10%) 0%,
+          rgba(246, 171, 47, 10%) 100%
+        ),
+        #fff;
+      border-radius: 4px;
+    }
+  }
+
   .upload-demo {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -325,6 +391,10 @@ watch(
         margin-bottom: 16px;
         animation: rotate 2s linear infinite;
       }
+    }
+
+    :deep(.wrapper) {
+      margin-bottom: 60px;
     }
 
     .upload-limits {

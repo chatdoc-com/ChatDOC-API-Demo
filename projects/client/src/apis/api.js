@@ -3,10 +3,7 @@ import { createParser } from 'eventsource-parser';
 
 import get from 'lodash-es/get';
 
-export const getUploadUrl = (collectionId) => {
-  if (collectionId) {
-    return `api/v1/documents/upload?collection_id=${collectionId}`;
-  }
+export const getUploadUrl = () => {
   return `api/v1/documents/upload`;
 };
 
