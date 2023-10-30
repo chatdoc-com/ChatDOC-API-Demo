@@ -16,7 +16,7 @@ export default defineConfig({
       symbolId: 'icon-[dir]-[name]',
     }),
   ],
-  envPrefix: ['VITE_', 'API_HOST'],
+  envPrefix: ['VITE_', 'API_HOST', 'IS_GLM', 'IS_BAIDU'],
   build: {
     outDir: '../server/static',
   },

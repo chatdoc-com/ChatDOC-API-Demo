@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="$answer"
     class="answer"
     :class="{
       error: answer.error,
@@ -25,20 +26,29 @@
               <svg-icon name="pages" :size="24" color="#6b6c6f" />
             </span>
             <div class="answer-source-items">
-              <span
+              <source-item-btn
                 v-for="source in answer.sources"
                 :key="source.page"
-                class="answer-source-item"
-                @click.stop="sourceItemClicked(source)">
-                <el-tooltip
-                  v-if="!!getTooltip(source)"
-                  placement="top"
-                  :hide-after="0"
-                  :content="getTooltip(source)">
-                  <span class="page">{{ source.page + 1 }}</span>
-                </el-tooltip>
-                <span v-else class="page">{{ source.page + 1 }}</span>
-              </span>
+                :source="source"
+                :tooltip="getTooltip(source)"
+                @clicked="sourceItemClicked" />
+              <el-popover
+                v-if="$invisiblePageSourceItems.length"
+                placement="bottom"
+                popper-class="invisible-pages-popover"
+                :teleported="false">
+                <template #reference>
+                  <span class="invisible-pages-ellipsis" @click.stop>
+                    ...
+                  </span>
+                </template>
+                <source-item-btn
+                  v-for="source in $invisiblePageSourceItems"
+                  :key="`${source.page}-invisible`"
+                  :source="source"
+                  :tooltip="getTooltip(source)"
+                  @clicked="sourceItemClicked" />
+              </el-popover>
             </div>
           </div>
         </div>
@@ -48,12 +58,11 @@
   </div>
 </template>
 <script setup>
-import { defineEmits } from 'vue';
+import { defineEmits, nextTick, onMounted, ref, watch } from 'vue';
 import SvgIcon from './SvgIcon.vue';
 import { convertSourceInfoItem } from '../utils/util.js';
 import { getHtmlByMd } from '../utils/md.js';
-
-import { ElTooltip } from 'element-plus';
+import SourceItemBtn from './SourceItemBtn.vue';
 
 const props = defineProps({
   answer: {
@@ -65,6 +74,9 @@ const props = defineProps({
     default: () => null,
   },
 });
+
+const $answer = ref(null);
+const $invisiblePageSourceItems = ref([]);
 const emits = defineEmits(['sourceItemClicked', 'chatItemClickedOnSource']);
 const sourceItemClicked = (source) => {
   emits('sourceItemClicked', source);
@@ -95,6 +107,23 @@ const getTooltip = (source) => {
   const docName = props.docNameDict?.[source.docId];
   return docName;
 };
+
+const setSourcePageInvisibleItemsMap = async () => {
+  await nextTick();
+  const invisibleItems = props.answer.sources.filter((source, index) => {
+    const dom = $answer.value.querySelector(
+      `.answer-source-item:nth-of-type(${index + 1})`,
+    );
+    return dom?.offsetTop > 0;
+  });
+  $invisiblePageSourceItems.value = invisibleItems;
+};
+onMounted(() => {
+  setSourcePageInvisibleItemsMap();
+});
+watch(() => props.answer.sources, setSourcePageInvisibleItemsMap, {
+  immediate: true,
+});
 </script>
 <style scoped lang="scss">
 .answer {
@@ -203,32 +232,6 @@ const getTooltip = (source) => {
         justify-content: space-around;
         height: 30px;
         overflow: hidden;
-
-        .answer-source-item {
-          padding: 5px 8px;
-          color: var(--el-text-color-primary);
-          font-size: 14px;
-          line-height: 20px;
-          text-decoration: underline;
-          cursor: pointer;
-          transition: color 0.2s, transform 0.2s;
-          text-underline-offset: 3px;
-
-          &:hover {
-            color: var(--el-color-primary);
-          }
-
-          &.active {
-            color: var(--el-color-primary);
-            font-weight: bold;
-            transform: scale(1.28);
-          }
-
-          &.is-deleted {
-            color: var(--el-text-color-regular);
-            text-decoration: none !important;
-          }
-        }
       }
     }
   }

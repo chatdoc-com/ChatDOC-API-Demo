@@ -19,10 +19,10 @@
       </div>
 
       <div class="upload-input">
-        <div>
+        <div class="upload-wrap">
           <el-upload
             ref="$upload"
-            accept=".pdf"
+            :accept="PACKAGE_ACCEPTS.join(',')"
             drag
             :data="{
               package_type: $package,
@@ -47,18 +47,24 @@
             <div class="el-upload__text">
               Drop file here or click to upload.
             </div>
+            <div class="upload-footer">
+              <website-url-upload
+                ref="$websiteUpload"
+                :upload-handle="uploadWebsite"
+                @uploaded="handleWebsiteUploaded" />
+            </div>
           </el-upload>
           <div v-if="$progress && !$isCollection">
             <span>0/1</span>
             <el-progress :percentage="$progress" />
           </div>
         </div>
-        <div>
+        <div class="upload-wrap">
           <el-upload
             ref="$collectionUpload"
             v-model:file-list="$files"
             drag
-            accept=".pdf"
+            :accept="PACKAGE_ACCEPTS.join(',')"
             :data="{
               package_type: $package,
               collection_id: $collectionId,
@@ -100,7 +106,7 @@
         <el-divider />
         <p class="limit">
           <span>10 pages/pdf</span>
-          <span>10 MB/file</span>
+          <span>36 MB/file</span>
           <span>30 files/collection</span>
         </p>
       </div>
@@ -114,11 +120,16 @@ import every from 'lodash-es/every';
 import { ElUpload, ElMessage, ElProgress } from 'element-plus';
 import { Loading } from '@element-plus/icons-vue';
 import SvgIcon from '../components/SvgIcon.vue';
-import { getUploadUrl, createCollection } from '../apis/api.js';
+import { getUploadUrl, createCollection, uploadWebsite } from '../apis/api.js';
 import { useRouter } from 'vue-router';
-import { validateFileType, validateFileSize } from '../utils/file.js';
-import { FILE_LIMIT } from '../utils/constants.js';
+import {
+  validateFileType,
+  validateFileSize,
+  isNeedToValideSize,
+} from '../utils/file.js';
+import { FILE_LIMIT, PACKAGE_ACCEPTS } from '../utils/constants.js';
 import PackageSelect from '../components/PackageSelect.vue';
+import WebsiteUrlUpload from '../components/WebsiteUrlUpload.vue';
 
 const router = useRouter();
 const $collectionUpload = ref(null);
@@ -131,6 +142,7 @@ const $progress = ref(0);
 const $uploadFiles = ref(0);
 const $loading = ref(false);
 const $packageError = ref('');
+const $websiteUpload = ref();
 
 const $isCollection = computed(() => {
   return $files.value.length > 0;
@@ -168,6 +180,10 @@ const validateFile = async (file) => {
       type: 'error',
     });
     return false;
+  }
+  if (!isNeedToValideSize(file)) {
+    $validatedFilesCount.value += 1;
+    return true;
   }
   try {
     await validateFileSize(file);
@@ -256,6 +272,11 @@ const handleError = (error) => {
 };
 const handleClick = () => {
   $packageError.value = '';
+  $websiteUpload.value.hideUrlInput();
+};
+
+const handleWebsiteUploaded = ({ id }) => {
+  router.push({ name: 'chat', params: { id } });
 };
 
 watch(() => $package.value, handleClick);
@@ -348,7 +369,7 @@ watch(
     .upload-input {
       display: flex;
 
-      div + div {
+      .upload-wrap + .upload-wrap {
         margin-left: 20px;
       }
 
@@ -425,6 +446,16 @@ watch(
           margin-left: 10px;
         }
       }
+    }
+
+    .upload-footer {
+      position: absolute;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding: 12px 0;
+      border-top: 1px solid var(--el-border-color-primary);
     }
   }
 }

@@ -27,8 +27,8 @@ importers:
   projects/client:
     dependencies:
       '@chatdocai/chatdoc-sdk':
-        specifier: 0.0.14
-        version: 0.0.14
+        specifier: 0.1.0-beta.1
+        version: 0.1.0-beta.1
       '@element-plus/icons-vue':
         specifier: ^2.1.0
         version: 2.1.0(vue@3.2.47)
@@ -414,8 +414,8 @@ packages:
       '@babel/helper-validator-identifier': 7.22.5
       to-fast-properties: 2.0.0
 
-  /@chatdocai/chatdoc-sdk@0.0.14:
-    resolution: {integrity: sha512-eS/nrS1BygOMH7TVR4KFlrd3wyiKMelN6MtJ2s+SCts6CTqWCbJ90ejWZOvkNO7Umul3q/wJMgpd4JKnMeou6g==}
+  /@chatdocai/chatdoc-sdk@0.1.0-beta.1:
+    resolution: {integrity: sha512-qbtxN23gsH2ydFH+ngj6vyrYnXYvnGwMLXmOxViuI6kQHf/rCkpXH3qJHLKlzFuqN923HD+XC7fqH/TxfKDyUQ==}
     dependencies:
       emittery: 1.0.1
       lodash-es: 4.17.21

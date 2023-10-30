@@ -2,7 +2,32 @@
   <div class="item-block" :class="{ active }" @click="onItemClick">
     <el-tooltip :content="docInfo.name" placement="top" :show-after="500">
       <p class="name-block">
-        <svg-icon name="pdf" :size="20" class="file-item-name-icon" />
+        <svg-icon
+          v-if="$isPDF"
+          name="pdf"
+          :size="20"
+          class="file-item-name-icon" />
+        <svg-icon
+          v-if="$isTXT"
+          name="txt"
+          :size="20"
+          class="file-item-name-icon" />
+        <svg-icon
+          v-if="$isMD"
+          name="md"
+          :size="20"
+          class="file-item-name-icon" />
+        <svg-icon
+          v-if="$isEPUB"
+          name="epub"
+          :size="20"
+          class="file-item-name-icon" />
+        <svg-icon
+          v-if="$isHTML"
+          name="website"
+          :size="20"
+          class="file-item-name-icon" />
+
         <span class="name">{{ docInfo.name }}</span>
       </p>
     </el-tooltip>
@@ -29,9 +54,10 @@
   </div>
 </template>
 <script setup>
-import { computed, defineEmits } from 'vue';
+import { computed, defineEmits, toRef } from 'vue';
 import SvgIcon from './SvgIcon.vue';
 import { FILE_STATUS, DOC_STATUS_SHORT_MESSAGE } from '../utils/constants.js';
+import { useFileType } from '../hooks/useFileType.js';
 const props = defineProps({
   docInfo: {
     type: Object,
@@ -44,6 +70,9 @@ const props = defineProps({
 });
 
 const emits = defineEmits(['onClicked']);
+const { $isPDF, $isEPUB, $isMD, $isHTML, $isTXT } = useFileType(
+  toRef(props, 'docInfo'),
+);
 const $isShowStatusIcon = computed(() => {
   return {
     success:

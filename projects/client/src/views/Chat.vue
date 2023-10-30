@@ -1,6 +1,15 @@
 <template>
   <div class="container">
-    <div ref="$pdfDom" class="pdf-container" data-test="sdk-container"></div>
+    <div
+      v-show="$fileInfo && $fileInfo.status >= FILE_STATUS.PARSED"
+      ref="$pdfDom"
+      class="pdf-container"
+      data-test="sdk-container"></div>
+    <div
+      v-if="$fileInfo && $fileInfo.status < FILE_STATUS.PARSED"
+      class="empty-container">
+      <empty-view :file-info="$fileInfo" />
+    </div>
     <div class="chat-container">
       <chat-view
         v-if="$fileInfo"
@@ -14,10 +23,11 @@
   </div>
 </template>
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { fetchFileInfo, getRecommendedPrompts } from '../apis/api.js';
 import ChatView from '../components/ChatView.vue';
+import EmptyView from '../components/EmptyView.vue';
 import { FILE_STATUS } from '../utils/constants.js';
 import { useSdk } from '../hooks/useSdk';
 const route = useRoute();
@@ -26,8 +36,7 @@ const $docId = computed(() => {
   return route.params.id;
 });
 
-const { $materialData, initSDK } = useSdk($pdfDom, $docId);
-let sdk = null;
+const { $materialData, openFile, drawSources, destroy } = useSdk($pdfDom);
 
 const $fileInfo = ref(null);
 const $fileParsed = computed(() => {
@@ -52,30 +61,21 @@ const getFileInfo = async () => {
 };
 
 const onSourceItemClicked = ({ sources }) => {
-  const results = [];
-  sources.forEach((source) => {
-    const { page, rects, spreads = [] } = source;
-    results.push({
-      pageNumber: page + 1,
-      rects,
-    });
-    spreads.forEach((spread) => {
-      results.push({
-        pageNumber: spread.page + 1,
-        rects: spread.rects,
-      });
-    });
-  });
-  sdk.drawSources(results);
+  drawSources(sources);
 };
 
 onMounted(async () => {
   getFileInfo();
-  sdk = initSDK();
+});
+
+watch($fileInfo, () => {
+  if ($fileInfo.value.status >= FILE_STATUS.PARSED) {
+    openFile($fileInfo.value);
+  }
 });
 
 onBeforeUnmount(() => {
-  sdk.destroy();
+  destroy();
   clearTimeout(timeout);
   timeout = null;
 });
@@ -97,5 +97,16 @@ onBeforeUnmount(() => {
 .chat-container {
   flex: 1;
   overflow: hidden;
+}
+
+.empty-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  overflow: hidden;
+  background-color: #f5f5f5;
 }
 </style>

@@ -35,7 +35,7 @@
   </div>
 </template>
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { fetchFileInfo, getRecommendedPrompts } from '../apis/api.js';
@@ -58,12 +58,7 @@ const $collectionDocNameDict = computed(() => {
 });
 const $docId = ref('');
 const $pdfDom = ref(null);
-const $sources = ref([]);
-const { $materialData, initSDK, setFileUrl, EVENT_TYPES } = useSdk(
-  $pdfDom,
-  $docId,
-);
-let sdk = null;
+const { $materialData, openFile, drawSources } = useSdk($pdfDom);
 const $fileInfo = computed(() => {
   return $fileList.value.find((file) => file.id === $docId.value);
 });
@@ -80,35 +75,18 @@ const $suggestedQuestions = ref([]);
 const $collectionName = ref('');
 
 const onSourceItemClicked = async ({ sources }) => {
-  const results = [];
-
-  sources.forEach((source) => {
-    const { page, rects, spreads = [] } = source;
-    results.push({
-      pageNumber: page + 1,
-      rects,
-    });
-    spreads.forEach((spread) => {
-      results.push({
-        pageNumber: spread.page + 1,
-        rects: spread.rects,
-      });
-    });
-  });
   const docId = sources[0].docId;
 
   if (docId !== $docId.value) {
     changeFile(docId);
-    $sources.value = results;
-    // drawSources on VIEWER_CREATED envent
+    drawSources(sources, true);
     return;
   }
-  sdk.drawSources(results);
+  drawSources(sources);
 };
 
 const changeFile = async (docId) => {
   $docId.value = docId;
-  setFileUrl(sdk, docId);
 };
 
 const pollingFetchFileList = async () => {
@@ -138,14 +116,6 @@ onMounted(async () => {
     $fileList.value = resp.documents;
     $collectionName.value = resp.name;
     $docId.value = $fileList.value.length > 0 && $fileList.value[0].id;
-    sdk = initSDK();
-
-    sdk.on(EVENT_TYPES.VIEWER_CREATED, () => {
-      if ($sources.value.length > 0) {
-        sdk.drawSources($sources.value);
-        $sources.value = [];
-      }
-    });
     pollingFetchFileList();
     $suggestedQuestions.value = await getRecommendedPrompts(
       $collectionId.value,
@@ -155,6 +125,12 @@ onMounted(async () => {
       message: error.message,
       type: 'error',
     });
+  }
+});
+
+watch($fileInfo, () => {
+  if ($fileInfo.value.status >= FILE_STATUS.PARSED) {
+    openFile($fileInfo.value);
   }
 });
 </script>

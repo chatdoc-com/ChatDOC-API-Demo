@@ -6,17 +6,13 @@ import {
   getDocElementsAPI,
   uploadDocumentsAPI,
   getSuggestedQuestionsAPI,
+  downloadDocumentAPI,
+  uploadWebsiteAPI,
 } from './app.api.js';
 import { sendRequestWithCatch } from '../utils/tools.js';
 import { throwAppError } from '../utils/AppException.js';
-import {
-  writeFileSync,
-  mkdirSync,
-  createReadStream,
-  existsSync,
-  statSync,
-} from 'node:fs';
-import path from 'path';
+// import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
+// import path from 'path';
 import { Readable } from 'stream';
 import jwt from 'jsonwebtoken';
 
@@ -31,28 +27,10 @@ class AppController {
     if (!file) {
       throwAppError('The file cannot be empty.');
     }
-    let buffer = [];
-    const chunks = [];
-    file.stream.on('readable', () => {
-      let chunk;
-      while ((chunk = file.stream.read()) !== null) {
-        chunks.push(chunk);
-      }
-    });
-    file.stream.on('end', () => {
-      buffer = Buffer.concat(chunks);
-    });
 
     const apiResponse = await sendRequestWithCatch(() =>
       uploadDocumentsAPI(file, ctx.request.body),
     );
-    if (!existsSync('upload')) {
-      mkdirSync('upload');
-    }
-    const newPath = `upload/${apiResponse.data.id}${path
-      .extname(file.originalName)
-      .toLowerCase()}`;
-    writeFileSync(newPath, buffer);
 
     ctx.body = apiResponse;
   }
@@ -97,22 +75,10 @@ class AppController {
 
   async downloadDocument(ctx) {
     const { id: uploadId } = ctx.params;
-    const filePath = path.join('./upload', `${uploadId}.pdf`);
-    if (!existsSync(filePath)) {
-      ctx.status = 404;
-      ctx.body = 'Document not found';
-      return;
-    }
-
-    const stats = statSync(filePath);
-    const fileSize = stats.size;
-
-    ctx.set('Content-Type', 'application/pdf');
-    ctx.set('Content-Disposition', `attachment; filename=${uploadId}.pdf`);
-    ctx.set('Content-Length', fileSize.toString());
-
-    const readStream = createReadStream(filePath);
-    ctx.body = readStream;
+    const response = await downloadDocumentAPI(uploadId);
+    ctx.set(response.headers);
+    ctx.body = response.data;
+    ctx.status = response.status;
   }
 
   async getRecommendQuestions(ctx) {
@@ -132,6 +98,12 @@ class AppController {
       status: 'ok',
       data: { token },
     };
+  }
+
+  async uploadWebsite(ctx) {
+    const { website } = ctx.request.body;
+    const resp = await sendRequestWithCatch(() => uploadWebsiteAPI(website));
+    ctx.body = resp;
   }
 }
 

@@ -5,7 +5,7 @@ import ENV from '../../../env.mjs';
 
 const proxyHost = ENV.API_HOST;
 const proxyApiKey = ENV.API_KEY;
-const prefix = '/api/v2/';
+const prefix = '/api/v2';
 const baseURL = `${proxyHost}${prefix}`;
 const options = {
   baseURL,
@@ -30,6 +30,11 @@ export async function uploadDocumentsAPI(file, body) {
     formData.append('collection_id', body.collection_id);
   }
   return http.post('documents/upload', formData);
+}
+
+export async function downloadDocumentAPI(uploadId) {
+  const url = `documents/${uploadId}/download`;
+  return http.get(url, { responseType: 'stream' });
 }
 
 export async function getDocByUploadIdAPI(uploadId) {
@@ -70,4 +75,9 @@ export async function chatWithDocumentAPI(uploadId, chatParams) {
 export async function getSuggestedQuestionsAPI(uploadId) {
   const url = `questions/suggested`;
   return http.get(url, { params: { upload_id: uploadId } });
+}
+
+export async function uploadWebsiteAPI(website) {
+  const url = `/documents/website`;
+  return http.post(url, { website });
 }

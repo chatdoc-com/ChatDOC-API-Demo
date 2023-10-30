@@ -26,7 +26,10 @@
 import { ref } from 'vue';
 import QustionCard from './QustionCard.vue';
 import AnswerCard from './AnswerCard.vue';
-import { convertMaterialDataToSources } from '../utils/util.js';
+import {
+  convertMaterialDataToSources,
+  convertSourceInfoToSourcesForHTML,
+} from '../utils/util.js';
 
 const $chatItemRefs = ref(null);
 
@@ -58,8 +61,13 @@ const handleQuestionMaterialClicked = (data) => {
   const {
     question: { materialData },
   } = data;
-  const source = convertMaterialDataToSources(materialData);
-  emits('sourceItemClicked', { sources: [source] });
+  let source = [];
+  if (materialData.anchorNode) {
+    source = convertSourceInfoToSourcesForHTML([materialData]);
+  } else {
+    source = [convertMaterialDataToSources(materialData)];
+  }
+  emits('sourceItemClicked', { sources: source });
 };
 </script>
 

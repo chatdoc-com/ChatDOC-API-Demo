@@ -6,6 +6,19 @@
     <div class="status-info tips">
       <div>{{ fileInfo.name }}</div>
       <div v-if="fileInfo.status === DOC_ERROR_STATUS.EXCEED_TOKENS_ERROR">
+        {{
+          $isPDF
+            ? 'The content of a single page in a document must not exceed 14,000 tokens.'
+            : 'The content of the markdown, epub, txt, and website must not exceed 300,000 tokens.'
+        }}
+      </div>
+      <div v-else-if="fileInfo.status === DOC_ERROR_STATUS.PACKAGE_NOT_ENOUGH">
+        {{ DOC_STATUS_MESSAGE[fileInfo.status] }}
+      </div>
+      <div
+        v-else-if="
+          fileInfo.status === DOC_ERROR_STATUS.PAGE_PACKAGE_NOT_ENOUGH
+        ">
         {{ DOC_STATUS_MESSAGE[fileInfo.status] }}
       </div>
       <div v-else>File processing failed, please try again later.</div>
@@ -23,14 +36,17 @@
 </template>
 
 <script setup>
+import { toRef } from 'vue';
 import { DOC_ERROR_STATUS, DOC_STATUS_MESSAGE } from '../utils/constants.js';
+import { useFileType } from '../hooks/useFileType';
 import SvgIcon from './SvgIcon.vue';
-defineProps({
+const props = defineProps({
   fileInfo: {
     type: Object,
     required: true,
   },
 });
+const { $isPDF } = useFileType(toRef(props, 'fileInfo'));
 </script>
 <style scoped>
 .status-info {
