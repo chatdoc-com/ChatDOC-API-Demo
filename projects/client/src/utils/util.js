@@ -1,18 +1,35 @@
 export const convertSourceInfoItemForHTML = (sourceInfoItem) => {
-  let { indexes = [] } = sourceInfoItem;
-  if (indexes.length === 0) {
-    indexes = [0];
+  if ('anchorNode' in sourceInfoItem) {
+    let { indexes = [] } = sourceInfoItem;
+    if (indexes.length === 0) {
+      indexes = [0];
+    }
+    return indexes.map((index) => {
+      return {
+        page: index,
+        docId: sourceInfoItem.upload_id,
+        rects: [
+          sourceInfoItem.anchorNode,
+          sourceInfoItem.focusNode,
+          Number(sourceInfoItem.anchorOffset),
+          Number(sourceInfoItem.focusOffset),
+        ],
+      };
+    });
   }
-  return indexes.map((index) => {
+  let rectObjByPageKey = {};
+  if ('rects' in sourceInfoItem) {
+    // collection
+    rectObjByPageKey = sourceInfoItem.rects;
+  } else {
+    rectObjByPageKey = sourceInfoItem;
+  }
+  const pages = Object.keys(rectObjByPageKey).map((pageKey) => Number(pageKey));
+  return pages.map((page) => {
     return {
-      page: index,
+      page,
       docId: sourceInfoItem.upload_id,
-      rects: [
-        sourceInfoItem.anchorNode,
-        sourceInfoItem.focusNode,
-        Number(sourceInfoItem.anchorOffset),
-        Number(sourceInfoItem.focusOffset),
-      ],
+      rects: [...rectObjByPageKey[page]],
     };
   });
 };
