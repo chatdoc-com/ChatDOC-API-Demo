@@ -1,3 +1,39 @@
+export const convertSourceInfoItemForHTML = (sourceInfoItem) => {
+  if ('anchorNode' in sourceInfoItem) {
+    let { indexes = [] } = sourceInfoItem;
+    if (indexes.length === 0) {
+      indexes = [0];
+    }
+    return indexes.map((index) => {
+      return {
+        page: index,
+        docId: sourceInfoItem.upload_id,
+        rects: [
+          sourceInfoItem.anchorNode,
+          sourceInfoItem.focusNode,
+          Number(sourceInfoItem.anchorOffset),
+          Number(sourceInfoItem.focusOffset),
+        ],
+      };
+    });
+  }
+  let rectObjByPageKey = {};
+  if ('rects' in sourceInfoItem) {
+    // collection
+    rectObjByPageKey = sourceInfoItem.rects;
+  } else {
+    rectObjByPageKey = sourceInfoItem;
+  }
+  const pages = Object.keys(rectObjByPageKey).map((pageKey) => Number(pageKey));
+  return pages.map((page) => {
+    return {
+      page,
+      docId: sourceInfoItem.upload_id,
+      rects: [...rectObjByPageKey[page]],
+    };
+  });
+};
+
 /**
  * Converts the source info item to a compatible format for both single document and collections source info.
  *
@@ -7,17 +43,43 @@
  * @return {Array} The converted source info item in a compatible format.
  */
 export const convertSourceInfoItem = (sourceInfoItem) => {
-  const { upload_id, rects } = sourceInfoItem;
-  const rectObjByPageKey = rects || sourceInfoItem;
+  // PDF
+  let rectObjByPageKey = {};
+  if ('rects' in sourceInfoItem) {
+    // collection
+    rectObjByPageKey = sourceInfoItem.rects;
+  } else {
+    // 单文档
+    rectObjByPageKey = sourceInfoItem;
+  }
   const pages = Object.keys(rectObjByPageKey).map((pageKey) => Number(pageKey));
-
   return pages.map((page) => {
     return {
+      // 非PDF文档中，page实为元素块的index
       page,
-      docId: upload_id,
+      docId: sourceInfoItem.upload_id,
       rects: [...rectObjByPageKey[page]],
     };
   });
+};
+
+export const convertSourceInfoToSourcesForHTML = (sourceInfo, docId) => {
+  const sources = [];
+  sourceInfo.forEach((item) => {
+    if (!Object.keys(item).length) {
+      console.warn('the source info is empty.');
+      return;
+    }
+    const itemsWithPage = convertSourceInfoItemForHTML(item);
+    itemsWithPage.forEach(({ page, docId: _docId, rects }) => {
+      sources.push({
+        page,
+        docId: _docId || docId,
+        rects: [...rects],
+      });
+    });
+  });
+  return sources;
 };
 
 /**
@@ -138,4 +200,8 @@ export function getTextWidth(text, font) {
   context.font = font;
   const metrics = context.measureText(text);
   return metrics.width;
+}
+
+export function isPdfFile(file) {
+  return file.name.split('.').at(-1).toLowerCase() === 'pdf';
 }

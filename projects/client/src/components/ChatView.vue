@@ -24,13 +24,20 @@
   </div>
 </template>
 <script setup>
-import { ref, computed, watch, defineEmits } from 'vue';
+import { ref, computed, watch, defineEmits, toRef } from 'vue';
 import { ElScrollbar } from 'element-plus';
 import { fetchChatStream, readStream } from '../apis/api.js';
 import ChatList from './chatList.vue';
 import chatInput from './chatInput.vue';
-import { convertSourceInfoToSources } from '../utils/util.js';
-import { DOC_STATUS_MESSAGE } from '../utils/constants.js';
+import {
+  convertSourceInfoToSources,
+  convertSourceInfoToSourcesForHTML,
+} from '../utils/util.js';
+import {
+  DOC_STATUS_MESSAGE,
+  DOC_STATUS_SHORT_MESSAGE,
+} from '../utils/constants.js';
+import { useFileType } from '../hooks/useFileType';
 const props = defineProps({
   fileInfo: {
     type: Object,
@@ -58,6 +65,8 @@ const props = defineProps({
   },
 });
 
+const { $isPDF } = useFileType(toRef(props, 'fileInfo'));
+
 const emits = defineEmits(['sourceItemClicked']);
 
 const $chatList = ref([]);
@@ -81,7 +90,9 @@ const $placeholder = computed(() => {
   if (props.disabled) {
     if (props.fileInfo.status < 0) {
       return (
-        DOC_STATUS_MESSAGE[props.fileInfo.status] || 'File processing failed.'
+        DOC_STATUS_SHORT_MESSAGE[props.fileInfo.status] ||
+        DOC_STATUS_MESSAGE[props.fileInfo.status] ||
+        'File processing failed.'
       );
     } else {
       return 'Please wait for document analysis results';
@@ -194,7 +205,9 @@ const sendQuestion = async () => {
     }
     newChatItem.answer.originalSources = JSON.parse(JSON.stringify(sourceInfo));
 
-    newChatItem.answer.sources.value = convertSourceInfoToSources(sourceInfo);
+    newChatItem.answer.sources.value = $isPDF.value
+      ? convertSourceInfoToSources(sourceInfo)
+      : convertSourceInfoToSourcesForHTML(sourceInfo);
 
     newChatItem.answer.isStreamComplete = true;
   } catch (e) {

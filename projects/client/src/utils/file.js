@@ -1,11 +1,13 @@
 import { loadDoc, DocManager } from './pdfium';
-import { FILE_LIMIT } from '../utils/constants.js';
+import { FILE_LIMIT, PACKAGE_ACCEPTS } from '../utils/constants.js';
 
-const accept = ['pdf'];
 export const validateFileType = (file) => {
-  // 检查后缀名
   const ext = file.name.split('.').at(-1).toLowerCase();
-  return accept.includes(ext);
+  return PACKAGE_ACCEPTS.includes(`.${ext}`);
+};
+export const isNeedToValideSize = (file) => {
+  const ext = file.name.split('.').at(-1).toLowerCase();
+  return ext === 'pdf';
 };
 
 export const validateFileSize = async (file) => {

@@ -7,6 +7,9 @@ export const getUploadUrl = () => {
   return `api/v1/documents/upload`;
 };
 
+export const uploadWebsite = (url) => {
+  return http.post(`/documents/website`, { website: url });
+};
 export const getDocumentToken = (id) => {
   return http.get(`/documents/${id}/token`);
 };
