@@ -105,9 +105,9 @@
         <p class="title">Upload limit</p>
         <el-divider />
         <p class="limit">
-          <span>10 pages/pdf</span>
-          <span>36 MB/file</span>
-          <span>30 files/collection</span>
+          <span>{{ FILE_LIMIT.MAX_PAGES }} pages/pdf</span>
+          <span>{{ FILE_LIMIT.MAX_SIZE }} MB/file</span>
+          <span>{{ FILE_LIMIT.COLLECTION_FILES_LIMIT }} files/collection</span>
         </p>
       </div>
     </div>
