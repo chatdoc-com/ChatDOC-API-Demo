@@ -2,6 +2,15 @@
   <div class="container">
     <div class="collection-list">
       <p class="name">{{ $collectionName }}</p>
+      <website-url-upload
+        placement="right"
+        :upload-handle="handleWebsiteUpload"
+        @uploaded="fetchFileList">
+        <template #reference>
+          <el-button class="chat-website-btn"> Chat with website </el-button>
+        </template>
+      </website-url-upload>
+
       <el-scrollbar ref="scrollbarRef" class="list-container" alway>
         <doc-list-item
           v-for="item in $fileList"
@@ -40,11 +49,12 @@ import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { fetchFileInfo, getRecommendedPrompts } from '../apis/api.js';
 import ChatView from '../components/ChatView.vue';
-import { FILE_STATUS } from '../utils/constants.js';
+import { FILE_STATUS, FILE_LIMIT } from '../utils/constants.js';
 import { useSdk } from '../hooks/useSdk';
 import DocListItem from '../components/DocListItem.vue';
 import EmptyView from '../components/EmptyView.vue';
-
+import WebsiteUrlUpload from '../components/WebsiteUrlUpload.vue';
+import { uploadWebsite } from '../apis/api.js';
 const route = useRoute();
 const $fileList = ref([]);
 const $collectionId = computed(() => {
@@ -73,6 +83,7 @@ const $fileParsed = computed(() => {
 });
 const $suggestedQuestions = ref([]);
 const $collectionName = ref('');
+let intervalId = null;
 
 const onSourceItemClicked = async ({ sources }) => {
   const docId = sources[0].docId;
@@ -94,7 +105,10 @@ const pollingFetchFileList = async () => {
     (file) => file.status > 0 && file.status < FILE_STATUS.PARSED,
   );
   if (hasProcessing) {
-    const intervalId = setInterval(async () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+    intervalId = setInterval(async () => {
       const resp = await fetchFileInfo($collectionId.value);
       $fileList.value = resp.documents;
       hasProcessing = $fileList.value.find(
@@ -110,7 +124,15 @@ const pollingFetchFileList = async () => {
   }
 };
 
-onMounted(async () => {
+const handleWebsiteUpload = (url) => {
+  const successedFiles = $fileList.value.filter((file) => file.status >= 0);
+  if (successedFiles.length >= FILE_LIMIT.COLLECTION_FILES_LIMIT) {
+    throw new Error("There aren't enough files slots left in the collection");
+  }
+  return uploadWebsite(url, $collectionId.value);
+};
+
+const fetchFileList = async () => {
   try {
     const resp = await fetchFileInfo($collectionId.value);
     $fileList.value = resp.documents;
@@ -126,6 +148,10 @@ onMounted(async () => {
       type: 'error',
     });
   }
+};
+
+onMounted(async () => {
+  fetchFileList();
 });
 
 watch($fileInfo, () => {
@@ -144,26 +170,47 @@ watch($fileInfo, () => {
 }
 
 .collection-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 250px;
   overflow: hidden;
   border-right: 1px solid #8080803d;
 
   .name {
     display: flex;
-    align-items: center;
-    height: 40px;
+    align-items: flex-start;
+    box-sizing: border-box;
+    width: 100%;
     margin: 0;
-    padding-left: 10px;
+    padding: 18px 10px;
     font-weight: 500;
     line-height: 100%;
     background-color: rgb(249, 249, 249);
-    border-bottom: 1px solid rgb(231, 234, 241);
+    border-bottom: 1px solid rgb(214 216 222);
   }
 
   .list-container {
-    height: calc(100% - 40px);
+    width: 250px;
     padding: 0 10px;
     overflow-y: auto;
+    background-color: #f9f9f9;
+  }
+
+  .chat-website-btn {
+    width: 250px;
+    padding: 25px 10px;
+    color: #5a6bd6;
+    font-weight: 500;
+    font-size: 16px;
+    background-color: #eeeffa;
+    border: none;
+    border-bottom: 1px solid rgb(214 216 222);
+    border-radius: 0;
+
+    &:hover {
+      background-color: #e6e7f6;
+    }
   }
 }
 

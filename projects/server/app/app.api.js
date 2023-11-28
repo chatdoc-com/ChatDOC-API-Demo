@@ -29,6 +29,9 @@ export async function uploadDocumentsAPI(file, body) {
   if (body.collection_id) {
     formData.append('collection_id', body.collection_id);
   }
+  if (body.ocr) {
+    formData.append('ocr', body.ocr);
+  }
   return http.post('documents/upload', formData);
 }
 
@@ -72,12 +75,17 @@ export async function chatWithDocumentAPI(uploadId, chatParams) {
   return response;
 }
 
+export async function getQuestionDetailAPI(questionId) {
+  const url = `questions/${questionId}`;
+  return http.get(url);
+}
+
 export async function getSuggestedQuestionsAPI(uploadId) {
   const url = `questions/suggested`;
   return http.get(url, { params: { upload_id: uploadId } });
 }
 
-export async function uploadWebsiteAPI(website) {
+export async function uploadWebsiteAPI(body) {
   const url = `/documents/website`;
-  return http.post(url, { website });
+  return http.post(url, body);
 }

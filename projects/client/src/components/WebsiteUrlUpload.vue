@@ -2,35 +2,38 @@
   <el-popover
     :teleported="false"
     :visible="$showUrlInput"
-    placement="top"
+    :placement="placement"
     trigger="click"
     :width="390"
     :show-after="0"
     :hide-after="0"
     :popper-style="{ padding: '10px' }"
+    @click.prevent
     @hide="handlePopoverHide">
     <template #reference>
-      <div class="upload-website">
-        <div @click.stop="onClickWebsite">
-          <svg-icon
-            name="upload-link"
-            :size="20"
-            margin="0 10px 0 0"
-            class="upload-link-icon" />
-          <span>Chat with website</span>
-          <el-popover placement="right" width="480px" :show-after="500">
-            <template #reference>
-              <span class="website-help" @click.stop>
-                <svg-icon
-                  name="question"
-                  :size="20"
-                  margin="0"
-                  class="upload-link-icon" />
-              </span>
-            </template>
-            <website-help :is-baidu="isBaidu" />
-          </el-popover>
-        </div>
+      <div class="upload-website" @click.stop="onClickWebsite">
+        <slot name="reference">
+          <div>
+            <svg-icon
+              name="upload-link"
+              :size="20"
+              margin="0 10px 0 0"
+              class="upload-link-icon" />
+            <span>Chat with website</span>
+            <el-popover placement="right" width="480px" :show-after="500">
+              <template #reference>
+                <span class="website-help" @click.stop>
+                  <svg-icon
+                    name="question"
+                    :size="20"
+                    margin="0"
+                    class="upload-link-icon" />
+                </span>
+              </template>
+              <website-help :is-baidu="isBaidu" />
+            </el-popover>
+          </div>
+        </slot>
       </div>
     </template>
     <el-input
@@ -53,7 +56,7 @@
   </el-popover>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { ElInput, ElPopover, ElButton, ElMessage } from 'element-plus';
 import SvgIcon from './SvgIcon.vue';
 import WebsiteHelp from './WebsiteHelp.vue';
@@ -63,6 +66,10 @@ const props = defineProps({
   uploadHandle: {
     type: Function,
     required: true,
+  },
+  placement: {
+    type: String,
+    default: 'top',
   },
 });
 
@@ -90,17 +97,30 @@ const handleUploadByUrl = async () => {
     $loading.value = true;
     const resp = await props.uploadHandle(url);
     emits('uploaded', resp);
-  } catch (error) {
-    ElMessage.error(error.message);
+    $showUrlInput.value = false;
+  } catch ({ message }) {
+    if (Array.isArray(message)) {
+      ElMessage.error(message[0]?.msg);
+    } else {
+      ElMessage.error(message);
+    }
   } finally {
     $loading.value = false;
     $url.value = '';
   }
 };
+
+const hideUrlInput = () => {
+  $showUrlInput.value = false;
+};
+onMounted(() => {
+  window.addEventListener('click', hideUrlInput);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener('click', hideUrlInput);
+});
 defineExpose({
-  hideUrlInput: () => {
-    $showUrlInput.value = false;
-  },
+  hideUrlInput,
 });
 </script>
 <style scoped lang="scss">
@@ -109,9 +129,9 @@ defineExpose({
   align-items: center;
   justify-content: center;
   justify-content: space-between;
+  box-sizing: border-box;
   height: 49px;
   height: max-content;
-  padding: 0 20px;
   color: var(--el-color-primary);
   font-weight: bolder;
   column-gap: 5px;

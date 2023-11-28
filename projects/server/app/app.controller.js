@@ -8,6 +8,7 @@ import {
   getSuggestedQuestionsAPI,
   downloadDocumentAPI,
   uploadWebsiteAPI,
+  getQuestionDetailAPI,
 } from './app.api.js';
 import { sendRequestWithCatch } from '../utils/tools.js';
 import { throwAppError } from '../utils/AppException.js';
@@ -101,8 +102,17 @@ class AppController {
   }
 
   async uploadWebsite(ctx) {
-    const { website } = ctx.request.body;
-    const resp = await sendRequestWithCatch(() => uploadWebsiteAPI(website));
+    const resp = await sendRequestWithCatch(() =>
+      uploadWebsiteAPI(ctx.request.body),
+    );
+    ctx.body = resp;
+  }
+
+  async getQuestionDetail(ctx) {
+    const { id: questionId } = ctx.params;
+    const resp = await sendRequestWithCatch(() =>
+      getQuestionDetailAPI(questionId),
+    );
     ctx.body = resp;
   }
 }

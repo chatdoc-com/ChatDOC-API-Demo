@@ -40,5 +40,6 @@ router.get(
   appController.getRecommendQuestions,
 );
 router.get('/documents/:id/token', appController.getDocumentToken);
+router.get('/questions/:id', appController.getQuestionDetail);
 
 export default router;

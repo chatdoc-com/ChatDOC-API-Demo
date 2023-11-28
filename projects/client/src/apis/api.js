@@ -7,8 +7,11 @@ export const getUploadUrl = () => {
   return `api/v1/documents/upload`;
 };
 
-export const uploadWebsite = (url) => {
-  return http.post(`/documents/website`, { website: url });
+export const uploadWebsite = (url, collectionId) => {
+  return http.post(`/documents/website`, {
+    website: url,
+    collection_id: collectionId,
+  });
 };
 export const getDocumentToken = (id) => {
   return http.get(`/documents/${id}/token`);
@@ -26,6 +29,10 @@ export const getRecommendedPrompts = (id) => {
   return http.get(`/documents/${id}/recommend-questions`);
 };
 
+export const getQuestionDetail = (id) => {
+  return http.get(`/questions/${id}`);
+};
+
 export const chatStream = (id) => {
   return `./api/v1/documents/${id}/chat`;
 };
@@ -38,7 +45,6 @@ export const fetchChatStream = async (id, data) => {
     },
     body: JSON.stringify(data),
   });
-
   if (response.status !== 200) {
     let errMsg = 'Network exception, please try again later.';
     let errInfo = {};
@@ -65,8 +71,8 @@ export const readStream = (readableStream, readable) => {
   function onParse(event) {
     if (event.type === 'event') {
       try {
-        const { answer, id, source_info } = JSON.parse(event.data);
-        readable(answer, source_info, id);
+        const { answer, id } = JSON.parse(event.data);
+        readable(answer, id);
       } catch (e) {
         console.error(e);
       }

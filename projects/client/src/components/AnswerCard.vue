@@ -7,12 +7,17 @@
       'el-icon-warning': answer.error,
     }"
     @click="chatItemClicked($event)">
-    <div>
+    <div class="user-chat">
       <img
         crossorigin="anonymous"
         class="icon-chatdoc"
         src="../assets/chatdoc.png"
         alt="" />
+      <span
+        v-if="answer.modelType === AI_MODEL.GPT4 && !answer.error"
+        class="model-name">
+        {{ answer.modelType.toUpperCase() }}
+      </span>
     </div>
     <div class="right">
       <div
@@ -63,6 +68,7 @@ import SvgIcon from './SvgIcon.vue';
 import { convertSourceInfoItem } from '../utils/util.js';
 import { getHtmlByMd } from '../utils/md.js';
 import SourceItemBtn from './SourceItemBtn.vue';
+import { AI_MODEL } from '../utils/constants.js';
 
 const props = defineProps({
   answer: {
@@ -157,6 +163,25 @@ watch(() => props.answer.sources, setSourcePageInvisibleItemsMap, {
       bottom: 28px;
       left: 48px;
       color: red;
+    }
+  }
+
+  .user-chat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    .model-name {
+      margin-top: 5px;
+      padding: 4px 6px;
+      color: #f2af6d;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 16px;
+      white-space: nowrap;
+      background: rgba(242, 175, 109, 10.2%);
+      border-radius: 4px;
     }
   }
 

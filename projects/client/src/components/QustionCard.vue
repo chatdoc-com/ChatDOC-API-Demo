@@ -7,9 +7,13 @@
       <div class="message">
         <div
           v-if="question.materialData"
-          class="question-material"
+          class="markdown-body question-material"
           @click="questionMaterialClicked"
-          v-html="getHtmlByMd(question.materialData.material)" />
+          v-html="
+            $isHTMLMaterial
+              ? question.materialData.material
+              : getHtmlByMd(question.materialData.material)
+          " />
         <div class="question-input-content">
           {{ question.content }}
         </div>
@@ -18,15 +22,19 @@
   </div>
 </template>
 <script setup>
+import { computed } from 'vue';
 import SvgIcon from './SvgIcon.vue';
 import { getHtmlByMd } from '../utils/md.js';
-defineProps({
+const props = defineProps({
   question: {
     type: Object,
     required: true,
   },
 });
 const emits = defineEmits(['questionMaterialClicked']);
+const $isHTMLMaterial = computed(() => {
+  return !!props.question.materialData.anchorNode;
+});
 const questionMaterialClicked = () => {
   emits('questionMaterialClicked');
 };

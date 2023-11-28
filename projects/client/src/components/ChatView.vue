@@ -15,6 +15,7 @@
       v-model:current-question="$currentQuestion"
       v-model:show-recommend-list="$showRecommendList"
       v-model:material-data="$materialData"
+      v-model:model-type="$modelType"
       :material-data="$materialData"
       :question-list="$questionList"
       :disabled="disabled"
@@ -26,7 +27,7 @@
 <script setup>
 import { ref, computed, watch, defineEmits, toRef } from 'vue';
 import { ElScrollbar } from 'element-plus';
-import { fetchChatStream, readStream } from '../apis/api.js';
+import { fetchChatStream, readStream, getQuestionDetail } from '../apis/api.js';
 import ChatList from './chatList.vue';
 import chatInput from './chatInput.vue';
 import {
@@ -36,6 +37,7 @@ import {
 import {
   DOC_STATUS_MESSAGE,
   DOC_STATUS_SHORT_MESSAGE,
+  AI_MODEL,
 } from '../utils/constants.js';
 import { useFileType } from '../hooks/useFileType';
 const props = defineProps({
@@ -77,6 +79,7 @@ const $showRecommendList = ref(true);
 const $materialData = ref(null);
 const $waitingAnswer = ref(false);
 const $questionListWrapRef = ref(null);
+const $modelType = ref(AI_MODEL.GPT3_5);
 
 const $questionList = computed(() => {
   return props.suggestedQuestions
@@ -128,6 +131,7 @@ const initChatItem = () => {
       error: ref(false),
       loading: ref(true),
       isStreamComplete: false,
+      modelType: $modelType.value,
     },
     feedback: null,
   };
@@ -170,7 +174,6 @@ const sendQuestion = async () => {
 
   const newChatItem = initChatItem($id);
   $chatList.value.push(newChatItem);
-
   try {
     let response = null;
     const isFromSelectText = !!$materialData.value;
@@ -180,6 +183,7 @@ const sendQuestion = async () => {
       search_entire_doc: !isFromSelectText,
       // language: "english",
       history: history,
+      model_type: $modelType.value,
     };
     clearCurrentQuestion();
     // return a ReadableStream
@@ -187,23 +191,23 @@ const sendQuestion = async () => {
     clearCurrentQuestion();
 
     // read stream
-    await readStream(response.body, (text, source_info, id) => {
+    await readStream(response.body, (text, id) => {
       newChatItem.answer.loading.value = false;
       answer += text;
       newChatItem.answer.content.value = answer;
-      if (source_info) {
-        sourceInfo = source_info;
-      }
       if (!newChatItem.id && id) {
         newChatItem.id = id;
       }
       scrollToQuestionListBottom();
     });
 
+    const questionDetail = await getQuestionDetail(newChatItem.id);
+    sourceInfo = questionDetail.source_info;
+
     if (!newChatItem.answer.content.value) {
       throw new Error('An unknown error occurred, please try again.');
     }
-    newChatItem.answer.originalSources = JSON.parse(JSON.stringify(sourceInfo));
+    newChatItem.answer.originalSources = sourceInfo;
 
     newChatItem.answer.sources.value = $isPDF.value
       ? convertSourceInfoToSources(sourceInfo)

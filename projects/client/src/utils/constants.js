@@ -65,6 +65,20 @@ export const PACKAGE_TYPES = [
   },
 ];
 
+export const OCR_TYPES = [
+  {
+    value: 'disable',
+    name: 'Disable OCR',
+  },
+  {
+    value: 'auto',
+    name: 'Auto OCR',
+  },
+  {
+    value: 'force',
+    name: 'Force OCR',
+  },
+];
 export const PACKAGE_ACCEPTS = ['.pdf', '.html', '.epub', '.txt', '.md'];
 
 export const PDF_EXT_REG = /\.(pdf)$/i;
@@ -72,3 +86,8 @@ export const PDF_EXT_REG = /\.(pdf)$/i;
 export const isBaidu = import.meta.env.VITE_IS_BAIDU === 'true';
 
 export const isGLM = import.meta.env.VITE_IS_GLM === 'true';
+
+export const AI_MODEL = {
+  GPT3_5: 'gpt-3.5-turbo',
+  GPT4: 'gpt-4',
+};

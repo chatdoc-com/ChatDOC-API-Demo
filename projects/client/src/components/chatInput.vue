@@ -23,9 +23,16 @@
           </ul>
         </div>
         <div v-if="materialData" class="material-bar">
-          <div class="material-content" data-test="material-content">
+          <div
+            class="material-content markdown-body"
+            data-test="material-content">
             <el-scrollbar max-height="20vh" class="content" always>
-              <div v-html="getHtmlByMd(materialData.material)" />
+              <div
+                v-html="
+                  $isHTMLMaterial
+                    ? materialData.material
+                    : getHtmlByMd(materialData.material)
+                " />
             </el-scrollbar>
             <el-icon
               class="material-cancel-handler"
@@ -80,6 +87,20 @@
                 </button>
               </div>
             </div>
+            <div class="actions">
+              <span class="label">Answer by GPT-4</span>
+              <el-tooltip
+                trigger="click"
+                :auto-close="5000"
+                :disabled="modelType !== AI_MODEL.GPT4"
+                content="It has been enabled, ChatDOC will use GPT-4 to answer questions.">
+                <el-switch
+                  :model-value="modelType"
+                  :active-value="AI_MODEL.GPT4"
+                  :inactive-value="AI_MODEL.GPT3_5"
+                  @change="updateModelType" />
+              </el-tooltip>
+            </div>
           </div>
         </div>
       </div>
@@ -88,13 +109,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, watch } from 'vue';
-import { ElInput, ElIcon } from 'element-plus';
+import { ref, onMounted, reactive, watch, computed } from 'vue';
+import { ElInput, ElIcon, ElSwitch } from 'element-plus';
 import { CircleCloseFilled } from '@element-plus/icons-vue';
 import throttle from 'lodash-es/throttle';
 import SvgIcon from './SvgIcon.vue';
 import { getHtmlByMd } from '../utils/md.js';
 import { getTextWidth } from '../utils/util.js';
+import { AI_MODEL } from '../utils/constants.js';
 
 const props = defineProps({
   questionList: {
@@ -116,6 +138,10 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  modelType: {
+    type: String,
+    default: AI_MODEL.GPT3_5,
+  },
 });
 
 const $inputRef = ref();
@@ -133,7 +159,11 @@ const emits = defineEmits([
   'update:currentQuestion',
   'update:showRecommendList',
   'update:materialData',
+  'update:modelType',
 ]);
+const $isHTMLMaterial = computed(() => {
+  return !!props.materialData.anchorNode;
+});
 
 const submitQuestion = async () => {
   emits('onSubmitQuestion');
@@ -142,6 +172,10 @@ const submitQuestion = async () => {
 const selectQuestion = (text) => {
   emits('update:currentQuestion', text);
   submitQuestion();
+};
+
+const updateModelType = (val) => {
+  emits('update:modelType', val);
 };
 
 onMounted(() => {
@@ -408,6 +442,22 @@ defineExpose({
         border-radius: 0 0 4px 4px;
       }
     }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      height: 40px;
+      padding: 0 15px;
+
+      .label {
+        margin-right: 10px;
+        color: #6b6c6f;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 44px;
+      }
+    }
   }
 
   .input-bar {
@@ -416,8 +466,8 @@ defineExpose({
     display: flex;
     align-items: center;
     overflow: hidden;
-    border: 1px solid var(--el-text-color-slight);
-    border-radius: 4px;
+    border-bottom: 1px solid var(--el-border-color-primary);
+    border-radius: 0;
     box-shadow: 0 4px 12px rgba(89, 87, 90, 8%);
 
     .el-textarea {

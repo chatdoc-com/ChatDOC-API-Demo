@@ -15,7 +15,14 @@
         <div v-if="$packageError" class="error-tip" @click.stop>
           {{ $packageError }}
         </div>
-        <package-select v-model:value="$package" />
+        <package-select
+          v-model:value="$package"
+          label="Choose Your PDF_Package_Type:"
+          :options="PACKAGE_TYPES" />
+        <package-select
+          v-model:value="$ocr"
+          class="ocr-select"
+          :options="OCR_TYPES" />
       </div>
 
       <div class="upload-input">
@@ -26,6 +33,7 @@
             drag
             :data="{
               package_type: $package,
+              ocr: $ocr,
             }"
             :multiple="false"
             :action="getUploadUrl()"
@@ -68,6 +76,7 @@
             :data="{
               package_type: $package,
               collection_id: $collectionId,
+              ocr: $ocr,
             }"
             :limit="FILE_LIMIT.COLLECTION_FILES_LIMIT"
             :multiple="true"
@@ -127,7 +136,12 @@ import {
   validateFileSize,
   isNeedToValideSize,
 } from '../utils/file.js';
-import { FILE_LIMIT, PACKAGE_ACCEPTS } from '../utils/constants.js';
+import {
+  FILE_LIMIT,
+  PACKAGE_ACCEPTS,
+  PACKAGE_TYPES,
+  OCR_TYPES,
+} from '../utils/constants.js';
 import PackageSelect from '../components/PackageSelect.vue';
 import WebsiteUrlUpload from '../components/WebsiteUrlUpload.vue';
 
@@ -149,6 +163,7 @@ const $isCollection = computed(() => {
 });
 
 const $package = ref('elite');
+const $ocr = ref('disable');
 
 const clearData = () => {
   $collectionId.value = null;
@@ -308,6 +323,7 @@ watch(
   flex-direction: column;
   align-items: center;
   height: 100%;
+  overflow-y: auto;
   background: url('../assets/home-bg.png') no-repeat right bottom,
     linear-gradient(180deg, #f6faff 0%, #eaf3ff 100%);
 
@@ -356,6 +372,14 @@ watch(
         #fff;
       border-radius: 4px;
     }
+
+    :deep(.ocr-select) {
+      margin-left: 15px;
+
+      .el-input__wrapper {
+        width: 220px;
+      }
+    }
   }
 
   .upload-demo {
@@ -365,6 +389,7 @@ watch(
     align-items: center;
     justify-content: center;
     height: 100%;
+    min-height: 750px;
 
     .upload-input {
       display: flex;
