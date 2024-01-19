@@ -12,13 +12,7 @@
             : 'The content of the markdown, epub, txt, and website must not exceed 300,000 tokens.'
         }}
       </div>
-      <div v-else-if="fileInfo.status === DOC_ERROR_STATUS.PACKAGE_NOT_ENOUGH">
-        {{ DOC_STATUS_MESSAGE[fileInfo.status] }}
-      </div>
-      <div
-        v-else-if="
-          fileInfo.status === DOC_ERROR_STATUS.PAGE_PACKAGE_NOT_ENOUGH
-        ">
+      <div v-else-if="DOC_STATUS_MESSAGE[fileInfo.status]">
         {{ DOC_STATUS_MESSAGE[fileInfo.status] }}
       </div>
       <div v-else>File processing failed, please try again later.</div>

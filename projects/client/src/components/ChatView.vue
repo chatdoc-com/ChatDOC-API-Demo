@@ -93,12 +93,12 @@ const $placeholder = computed(() => {
   if (props.disabled) {
     if (props.fileInfo.status < 0) {
       return (
-        DOC_STATUS_SHORT_MESSAGE[props.fileInfo.status] ||
-        DOC_STATUS_MESSAGE[props.fileInfo.status] ||
+        `${DOC_STATUS_SHORT_MESSAGE[props.fileInfo.status]}.` ||
+        `${DOC_STATUS_MESSAGE[props.fileInfo.status]}.` ||
         'File processing failed.'
       );
     } else {
-      return 'Please wait for document analysis results';
+      return 'Please wait for document analysis results.';
     }
   } else {
     return '+ New chat.';
