@@ -6,6 +6,8 @@ import { readFileSync } from 'fs';
 import ENV from '../../env.mjs';
 
 process.env.API_HOST = ENV.API_HOST;
+process.env.IS_BAIDU = ENV.IS_BAIDU;
+process.env.IS_GLM = ENV.IS_GLM;
 
 const env = loadEnv('development', process.cwd());
 export default defineConfig({

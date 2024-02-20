@@ -15,13 +15,16 @@
       v-model:current-question="$currentQuestion"
       v-model:show-recommend-list="$showRecommendList"
       v-model:material-data="$materialData"
-      v-model:model-type="$modelType"
       :material-data="$materialData"
       :question-list="$questionList"
       :disabled="disabled"
       :waiting-answer="$waitingAnswer"
       :placeholder="$placeholder"
-      @on-submit-question="submitQuestion" />
+      @on-submit-question="submitQuestion">
+      <template #actions>
+        <model-type v-if="!isBaidu" v-model:model-type="$modelType" />
+      </template>
+    </chat-input>
   </div>
 </template>
 <script setup>
@@ -30,6 +33,7 @@ import { ElScrollbar } from 'element-plus';
 import { fetchChatStream, readStream, getQuestionDetail } from '../apis/api.js';
 import ChatList from './chatList.vue';
 import chatInput from './chatInput.vue';
+import ModelType from './ModelType.vue';
 import {
   convertSourceInfoToSources,
   convertSourceInfoToSourcesForHTML,
@@ -38,6 +42,7 @@ import {
   DOC_STATUS_MESSAGE,
   DOC_STATUS_SHORT_MESSAGE,
   AI_MODEL,
+  isBaidu,
 } from '../utils/constants.js';
 import { useFileType } from '../hooks/useFileType';
 const props = defineProps({
@@ -79,8 +84,7 @@ const $showRecommendList = ref(true);
 const $materialData = ref(null);
 const $waitingAnswer = ref(false);
 const $questionListWrapRef = ref(null);
-const $modelType = ref(AI_MODEL.GPT3_5);
-
+const $modelType = ref(isBaidu ? AI_MODEL.BAIDU : AI_MODEL.GPT3_5);
 const $questionList = computed(() => {
   return props.suggestedQuestions
     .map((str) => {
@@ -274,7 +278,7 @@ watch(
 
 .chat-view-main {
   /* stylelint-disable */
-  height: calc(
+  min-height: calc(
     (var(--vh, 1vh) * 100) - var(--footer-height) - var(--header-height)
   );
   /* stylelint-enable */
