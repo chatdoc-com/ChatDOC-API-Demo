@@ -1,28 +1,59 @@
 <template>
   <div>
-    <span class="label">Answer by GPT-4</span>
-    <el-tooltip
-      trigger="click"
-      :auto-close="5000"
-      :disabled="modelType !== AI_MODEL.GPT4"
-      content="It has been enabled, ChatDOC will use GPT-4 to answer questions.">
-      <el-switch
-        :model-value="modelType"
-        :active-value="AI_MODEL.GPT4"
-        :inactive-value="AI_MODEL.GPT3_5"
-        @change="updateModelType" />
-    </el-tooltip>
+    <span class="label">Answer by</span>
+    <el-select
+      :model-value="modelType"
+      placeholder="Select"
+      size="small"
+      style="width: 120px"
+      popper-class="model-pop"
+      @change="updateModelType">
+      <el-option
+        v-for="item in $models"
+        :key="item.value"
+        :class="item.value"
+        :label="item.label"
+        :value="item.value">
+        <div class="option">
+          <img :src="item.icon" width="16" />
+          <span style="margin-left: 8px"> {{ item.label }}</span>
+        </div>
+      </el-option>
+      <template #prefix>
+        <img :src="$selectedModel.icon" width="16" />
+      </template>
+    </el-select>
   </div>
 </template>
 <script setup>
-import { ElTooltip, ElSwitch } from 'element-plus';
-import { AI_MODEL } from '../utils/constants.js';
-
-defineProps({
+import { ElSelect, ElOption } from 'element-plus';
+import { AI_MODEL, isBaidu } from '../utils/constants.js';
+import { computed } from 'vue';
+const props = defineProps({
   modelType: {
     type: String,
-    default: AI_MODEL.GPT3_5,
+    default: AI_MODEL.default,
   },
+});
+
+const $models = computed(() => {
+  const models = Object.values(AI_MODEL).map((value) => {
+    return {
+      label: value,
+      value,
+      icon: new URL(`../assets/${value.split('-')[0]}.svg`, import.meta.url)
+        .href,
+    };
+  });
+  if (isBaidu) {
+    return models.filter((model) => model.value === AI_MODEL.BAIDU);
+  } else {
+    return models.filter((model) => model.value !== AI_MODEL.BAIDU);
+  }
+});
+
+const $selectedModel = computed(() => {
+  return $models.value.find((model) => model.value === props.modelType);
 });
 
 const emits = defineEmits(['update:modelType']);
@@ -37,5 +68,11 @@ const updateModelType = (val) => {
   font-weight: 500;
   font-size: 12px;
   line-height: 44px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 </style>

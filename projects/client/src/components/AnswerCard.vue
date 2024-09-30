@@ -14,9 +14,15 @@
         src="../assets/chatdoc.png"
         alt="" />
       <span
-        v-if="answer.modelType === AI_MODEL.GPT4 && !answer.error"
+        v-if="
+          (answer.modelType === AI_MODEL.GPT4 ||
+            answer.modelType === AI_MODEL.GPT4o) &&
+          !answer.error
+        "
         class="model-name">
-        {{ answer.modelType.toUpperCase() }}
+        {{
+          `${answer.modelType.split('-')[0].toUpperCase()}-${answer.modelType.split('-')[1]}`
+        }}
       </span>
     </div>
     <div class="right">

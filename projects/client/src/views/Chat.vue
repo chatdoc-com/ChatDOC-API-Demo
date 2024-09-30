@@ -91,6 +91,7 @@ onBeforeUnmount(() => {
 
 .pdf-container {
   flex: 1;
+  min-width: 850px;
   overflow: hidden;
 }
 

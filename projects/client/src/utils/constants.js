@@ -97,7 +97,8 @@ export const isBaidu = import.meta.env.IS_BAIDU === 'true';
 export const isGLM = import.meta.env.IS_GLM === 'true';
 
 export const AI_MODEL = {
-  GPT3_5: 'gpt-3.5-turbo',
+  default: 'default',
   GPT4: 'gpt-4',
   BAIDU: 'baidu',
+  GPT4o: 'gpt-4o',
 };

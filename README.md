@@ -2,8 +2,8 @@
 
 ## Environment
 
-- Node.js >= 16.x
-- pnpm >= 8.x
+- Node.js >= 18.x
+- pnpm >= 9.x
 
 ## Installation
 

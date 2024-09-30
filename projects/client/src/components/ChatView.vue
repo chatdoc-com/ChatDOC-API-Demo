@@ -84,7 +84,7 @@ const $showRecommendList = ref(true);
 const $materialData = ref(null);
 const $waitingAnswer = ref(false);
 const $questionListWrapRef = ref(null);
-const $modelType = ref(isBaidu ? AI_MODEL.BAIDU : AI_MODEL.GPT3_5);
+const $modelType = ref(isBaidu ? AI_MODEL.BAIDU : AI_MODEL.default);
 const $questionList = computed(() => {
   return props.suggestedQuestions
     .map((str) => {
@@ -278,7 +278,7 @@ watch(
 
 .chat-view-main {
   /* stylelint-disable */
-  min-height: calc(
+  max-height: calc(
     (var(--vh, 1vh) * 100) - var(--footer-height) - var(--header-height)
   );
   /* stylelint-enable */
@@ -286,7 +286,9 @@ watch(
 
   .answer {
     background-color: #fbfbfb;
-    box-shadow: 0 1px 0 #dedede, 0 -1px 0 #dedede;
+    box-shadow:
+      0 1px 0 #dedede,
+      0 -1px 0 #dedede;
     cursor: pointer;
 
     &.highlight {

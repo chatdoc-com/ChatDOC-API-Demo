@@ -58,7 +58,7 @@
                 :autosize="{ minRows: 1, maxRows: 5 }"
                 :placeholder="placeholder"
                 :disabled="disabled"
-                @keypress.enter="submitQuestion"
+                @keypress.enter="onInputEnter"
                 @input="onInput" />
               <div ref="$inputHandler" class="input-handler">
                 <button
@@ -129,7 +129,7 @@ const props = defineProps({
   },
   modelType: {
     type: String,
-    default: AI_MODEL.GPT3_5,
+    default: AI_MODEL.default,
   },
 });
 
@@ -153,6 +153,13 @@ const emits = defineEmits([
 const $isHTMLMaterial = computed(() => {
   return !!props.materialData.anchorNode;
 });
+
+const onInputEnter = (event) => {
+  if (!event.shiftKey) {
+    event.preventDefault();
+    emits('onSubmitQuestion');
+  }
+};
 
 const submitQuestion = async () => {
   emits('onSubmitQuestion');
