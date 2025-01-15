@@ -68,10 +68,6 @@ export const PACKAGE_TYPES = [
     value: 'basic',
     name: 'Basic',
   },
-  {
-    value: 'lite',
-    name: 'Lite',
-  },
 ];
 
 export const OCR_TYPES = [
