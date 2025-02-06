@@ -236,6 +236,7 @@ watch(() => props.answer.sources, setSourcePageInvisibleItemsMap, {
         font-size: 14px;
         line-height: 16px;
         border-bottom: 1px solid #000;
+        cursor: pointer;
       }
 
       :is(.invisible-pages-popover) {
@@ -244,6 +245,8 @@ watch(() => props.answer.sources, setSourcePageInvisibleItemsMap, {
         width: max-content !important;
         min-width: 50px;
         max-width: 300px;
+        max-height: 200px;
+        overflow: hidden auto;
       }
     }
 
