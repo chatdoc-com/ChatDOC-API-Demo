@@ -1,8 +1,9 @@
 import Router from '@koa/router';
 import appController from './app.controller.js';
 import multer from '@koa/multer';
+const MAX_SIZE = 60;
 const upload = multer({
-  limits: { fileSize: 36 * 1024 * 1024 },
+  limits: { fileSize: MAX_SIZE * 1024 * 1024 },
 }).single('file');
 
 const prefix = '/api/v1';
@@ -21,7 +22,7 @@ router.post(
       if (error.code === 'LIMIT_FILE_SIZE') {
         ctx.throw(
           400,
-          `Your file is larger than (36MB) so we can't deal with it.`,
+          `Your file is larger than (${MAX_SIZE}MB) so we can't deal with it.`,
         );
       }
       ctx.throw(400, error);

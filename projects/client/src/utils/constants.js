@@ -54,8 +54,8 @@ export const FILE_STATUS = {
 };
 
 export const FILE_LIMIT = {
-  MAX_SIZE: 36, // MB
-  MAX_PAGES: 10,
+  MAX_SIZE: 60, // MB
+  MAX_PAGES: 300,
   COLLECTION_FILES_LIMIT: 30,
 };
 
